@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER 부록 — CI/CD 파이프라인 (GitHub Actions + Vercel)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --accent:#8b5cf6;--accent2:#a78bfa;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--orange:#f97316;--teal:#14b8a6;--pink:#ec4899;
+  --cyan:#06b6d4;--gold:#d4a017;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-weight:900;font-size:17px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{color:var(--accent);}
+.bonus-badge{background:rgba(139,92,246,.12);color:var(--accent2);border:1px solid rgba(139,92,246,.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px;}
+.bonus-badge::before{content:'🔄 ';}
+.back-link{font-size:12px;color:var(--muted2);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--text);}
+
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}.snav-pill.s2{--c:#10b981;}.snav-pill.s3{--c:#8b5cf6;}.snav-pill.s4{--c:#ec4899;}.snav-pill.s5{--c:#f97316;}.snav-pill.s6{--c:#14b8a6;}.snav-pill.s7{--c:#f59e0b;}.snav-pill.s8{--c:#06b6d4;}.snav-pill.s9{--c:#d4a017;}
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+
+.container{max-width:920px;margin:0 auto;padding:50px 32px 100px;}
+
+.hero{margin-bottom:30px;text-align:center;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-size:42px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin-bottom:14px;}
+.hero h1 span{color:var(--accent2);}
+.hero-lead{font-size:14px;color:var(--muted2);line-height:1.85;max-width:620px;margin:0 auto;}
+
+.spine{background:linear-gradient(135deg,rgba(139,92,246,.07),rgba(59,130,246,.04));border:1px solid rgba(139,92,246,.22);border-radius:14px;padding:22px 26px;margin-bottom:36px;}
+.spine-text{font-size:18px;font-weight:700;color:var(--text);line-height:1.55;font-family:'Gowun Batang',serif;text-align:center;}
+.spine-text span{color:var(--accent2);}
+
+.section{margin-bottom:50px;scroll-margin-top:130px;}
+.sec-title{font-size:22px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.sec-bar{width:3px;height:24px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+.sec-sub{font-size:13px;color:var(--muted2);margin-bottom:22px;padding-left:13px;line-height:1.7;}
+p.body{font-size:13.5px;color:var(--muted2);line-height:1.95;margin-bottom:14px;}
+p.body strong{color:var(--text);}
+p.body em{color:var(--accent2);font-style:normal;font-weight:600;}
+
+.callout{border-radius:11px;padding:16px 20px;margin:18px 0;}
+.callout.purple{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.22);}
+.callout.green{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);}
+.callout.yellow{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);}
+.callout.blue{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);}
+.callout.red{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);}
+.cl-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.callout.purple .cl-label{color:var(--accent2);}
+.callout.green .cl-label{color:var(--green);}
+.callout.yellow .cl-label{color:var(--yellow);}
+.callout.blue .cl-label{color:var(--blue2);}
+.callout.red .cl-label{color:var(--red);}
+.cl-body{font-size:13px;color:var(--muted2);line-height:1.85;}
+.cl-body strong{color:var(--text);}
+.cl-body em{color:var(--accent2);font-style:normal;}
+.cl-body code{background:var(--s2);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--orange);}
+
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--s2);}
+thead th{padding:10px 14px;text-align:left;font-weight:700;color:var(--muted2);font-size:11px;letter-spacing:.5px;white-space:nowrap;}
+tbody tr{border-top:1px solid var(--border);}
+tbody tr:hover{background:var(--s2);}
+tbody td{padding:10px 14px;color:var(--muted2);line-height:1.65;vertical-align:top;}
+tbody td strong{color:var(--text);}
+tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+/* ── PIPELINE FLOW ── */
+.pipeline{display:flex;align-items:stretch;gap:6px;margin:18px 0;flex-wrap:wrap;}
+.pipe-step{flex:1;min-width:130px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:13px;text-align:center;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.04);}
+.pipe-step.fail{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.04);}
+.pipe-step.ok{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+.pipe-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent2);font-weight:700;margin-bottom:3px;letter-spacing:1px;}
+.pipe-icon{font-size:22px;margin-bottom:4px;}
+.pipe-name{font-size:11.5px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.pipe-desc{font-size:10.5px;color:var(--muted2);line-height:1.55;}
+.pipe-arr{display:flex;align-items:center;color:var(--muted);font-size:13px;}
+
+/* ── CODE BOX ── */
+.codebox{background:#05080d;border:1px solid var(--border2);border-radius:11px;overflow:hidden;margin:14px 0;}
+.codebox-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0b1018;border-bottom:1px solid var(--border);}
+.codebox-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent2);font-weight:700;}
+.codebox-tag{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.codebox-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.85;white-space:pre;overflow-x:auto;}
+.codebox-body .h{color:var(--accent2);font-weight:700;}
+.codebox-body .cmt{color:var(--muted);}
+.codebox-body .key{color:var(--orange);}
+.codebox-body .str{color:var(--green);}
+.codebox-body .kw{color:var(--purple);}
+.codebox-body .num{color:var(--yellow);}
+
+/* ── ENV CARDS ── */
+.env-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;}
+.env-card{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 16px;}
+.env-card.dev{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+.env-card.prev{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.04);}
+.env-card.prod{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.04);}
+.env-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--text);margin-bottom:5px;}
+.env-tag{font-size:10px;font-weight:700;letter-spacing:1.5px;margin-bottom:10px;}
+.env-card.dev .env-tag{color:var(--green);}
+.env-card.prev .env-tag{color:var(--yellow);}
+.env-card.prod .env-tag{color:var(--red);}
+.env-list{font-size:11.5px;color:var(--muted2);line-height:1.85;}
+.env-list strong{color:var(--text);}
+
+.check-list{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin:14px 0;}
+.check-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted2);line-height:1.85;padding:5px 0;}
+.check-row::before{content:'☐';color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0;}
+.check-row strong{color:var(--text);}
+.check-row code{background:var(--s1);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+.btn-nav{background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:10px;padding:13px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s;text-decoration:none;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent2);}
+.divider{border:none;border-top:1px solid var(--border);margin:42px 0;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+@media(max-width:768px){
+  .container{padding:30px 16px 80px;}
+  .hero h1{font-size:28px;}
+  .env-grid{grid-template-columns:1fr;}
+  .stage-nav{justify-content:flex-start;padding:9px 16px;}
+  .nav-bottom{flex-direction:column;gap:14px;align-items:stretch;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="bonus-badge">부록 · CI/CD</span>
+  </div>
+  <a class="back-link" href="../index.html">← 커리큘럼 홈</a>
+</div>
+
+<nav class="stage-nav">
+  <a href="../index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="../stage1.html" class="snav-pill s1">1</a>
+  <a href="../stage2.html" class="snav-pill s2">2</a>
+  <a href="../stage3.html" class="snav-pill s3">3</a>
+  <a href="../stage4.html" class="snav-pill s4">4</a>
+  <a href="../stage5.html" class="snav-pill s5">5</a>
+  <a href="../stage6.html" class="snav-pill s6">6</a>
+  <a href="../stage7.html" class="snav-pill s7">7</a>
+  <a href="../stage8.html" class="snav-pill s8">8</a>
+  <a href="../stage9.html" class="snav-pill s9">9</a>
+</nav>
+
+<div class="container">
+
+<section class="hero">
+  <div class="hero-eyebrow">★ GitHub Actions + Vercel + Test 게이트 · BONUS</div>
+  <h1>코드를 푸시하면<br><span>자동으로 검증·배포</span></h1>
+  <p class="hero-lead">Vercel은 GitHub 연결만으로 절반은 됩니다. 나머지 절반 — 테스트 게이트·자동 롤백·preview 환경·알림 — 을 GitHub Actions로 채웁니다.</p>
+</section>
+
+<div class="spine">
+  <div class="spine-text">"<span>매 커밋마다 자동 검증</span>이 1인 사고 방지의 마지막 선"</div>
+</div>
+
+<hr class="divider">
+
+<!-- §1: 파이프라인 전체 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§1. CI/CD 파이프라인 전체 그림</h2>
+  <p class="sec-sub">push → 검증 → 배포 → 알림 5단계</p>
+
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 01</div>
+      <div class="pipe-icon">📤</div>
+      <div class="pipe-name">git push</div>
+      <div class="pipe-desc">로컬 → GitHub</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 02</div>
+      <div class="pipe-icon">🧪</div>
+      <div class="pipe-name">CI 검증</div>
+      <div class="pipe-desc">typecheck · lint · test · build</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 03</div>
+      <div class="pipe-icon">🚀</div>
+      <div class="pipe-name">자동 배포</div>
+      <div class="pipe-desc">PR → Preview / main → Prod</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 04</div>
+      <div class="pipe-icon">✅</div>
+      <div class="pipe-name">smoke test</div>
+      <div class="pipe-desc">배포 직후 핵심 흐름 검증</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-step">
+      <div class="pipe-num">STEP 05</div>
+      <div class="pipe-icon">🔔</div>
+      <div class="pipe-name">텔레그램 알림</div>
+      <div class="pipe-desc">성공·실패 자동 통보</div>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <div class="cl-label">🎯 1인 SaaS의 CI/CD가 풀어야 할 3가지</div>
+    <div class="cl-body">
+      <strong>1.</strong> "내가 짠 코드가 진짜 작동하나" — 자동 테스트<br>
+      <strong>2.</strong> "배포 후 사이트 안 죽었나" — Smoke test<br>
+      <strong>3.</strong> "사고 나면 1분 안에 알 수 있나" — 자동 알림<br><br>
+      이 3가지만 자동화되면 Stage 5의 Stop Hook과 합쳐 거의 모든 사고 방어.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §2: 환경 분리 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§2. 3환경 분리 — Dev / Preview / Production</h2>
+
+  <div class="env-grid">
+    <div class="env-card dev">
+      <div class="env-tag">로컬</div>
+      <div class="env-name">Development</div>
+      <div class="env-list">
+        <strong>URL:</strong> localhost:3000<br>
+        <strong>DB:</strong> Supabase 로컬 또는 별도 dev 프로젝트<br>
+        <strong>결제:</strong> 토스 테스트 키<br>
+        <strong>env:</strong> .env.local
+      </div>
+    </div>
+    <div class="env-card prev">
+      <div class="env-tag">PR마다 자동</div>
+      <div class="env-name">Preview</div>
+      <div class="env-list">
+        <strong>URL:</strong> *-git-feature.vercel.app<br>
+        <strong>DB:</strong> dev 프로젝트 또는 별도 preview<br>
+        <strong>결제:</strong> 토스 테스트 키<br>
+        <strong>env:</strong> Vercel Preview env
+      </div>
+    </div>
+    <div class="env-card prod">
+      <div class="env-tag">main 브랜치만</div>
+      <div class="env-name">Production</div>
+      <div class="env-list">
+        <strong>URL:</strong> my-newsletter.vercel.app<br>
+        <strong>DB:</strong> production Supabase<br>
+        <strong>결제:</strong> 토스 실 키<br>
+        <strong>env:</strong> Vercel Production env
+      </div>
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">⚠️ Production DB를 dev에서 절대 건들지 말 것</div>
+    <div class="cl-body">
+      가장 흔한 1인 사고 — 로컬 .env.local에 production Supabase URL이 남아있어서 테스트 데이터가 production DB에 들어감. <strong>해결:</strong> .env.local은 항상 dev 프로젝트만. production env는 Vercel 대시보드에서만 관리.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §3: GitHub Actions 워크플로우 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§3. GitHub Actions — 핵심 워크플로우</h2>
+  <p class="sec-sub">.github/workflows/ 폴더에 yml 파일 1개. 매 push에 자동 실행</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">.github/workflows/ci.yml</span>
+      <span class="codebox-tag">검증 게이트</span>
+    </div>
+    <div class="codebox-body"><span class="h">name:</span> CI
+
+<span class="h">on:</span>
+  <span class="key">push:</span>
+    branches: [main]
+  <span class="key">pull_request:</span>
+    branches: [main]
+
+<span class="h">jobs:</span>
+  <span class="key">verify:</span>
+    runs-on: ubuntu-latest
+    timeout-minutes: <span class="num">10</span>
+    steps:
+      - <span class="key">uses:</span> actions/checkout@v4
+
+      - <span class="key">uses:</span> actions/setup-node@v4
+        with:
+          node-version: <span class="str">'20'</span>
+          cache: <span class="str">'pnpm'</span>
+
+      - <span class="key">uses:</span> pnpm/action-setup@v4
+        with: { version: <span class="num">9</span> }
+
+      - <span class="key">run:</span> pnpm install --frozen-lockfile
+      - <span class="key">run:</span> pnpm typecheck
+      - <span class="key">run:</span> pnpm lint
+      - <span class="key">run:</span> pnpm test:ci
+
+      <span class="cmt"># Build 검증 (env 없어도 build만)</span>
+      - <span class="key">run:</span> pnpm build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: <span class="str">'https://placeholder.supabase.co'</span>
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: <span class="str">'placeholder'</span>
+
+  <span class="key">e2e:</span>
+    runs-on: ubuntu-latest
+    needs: verify
+    timeout-minutes: <span class="num">15</span>
+    steps:
+      - <span class="key">uses:</span> actions/checkout@v4
+      - <span class="key">uses:</span> actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'pnpm'</span> }
+      - <span class="key">uses:</span> pnpm/action-setup@v4
+      - <span class="key">run:</span> pnpm install --frozen-lockfile
+      - <span class="key">run:</span> pnpm exec playwright install chromium
+      - <span class="key">run:</span> pnpm exec playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: <span class="str">'http://localhost:3000'</span>
+
+      - <span class="key">if:</span> failure()
+        <span class="key">uses:</span> actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/</div>
+  </div>
+
+  <div class="callout green">
+    <div class="cl-label">✅ Vercel은 자동 — Actions는 검증만</div>
+    <div class="cl-body">
+      Vercel이 GitHub 연결돼 있으면 push마다 자동 배포 (Preview·Production). <strong>GitHub Actions는 "배포 전 검증"만 담당.</strong> 이중 작업 안 함. Actions가 fail이어도 Vercel은 배포 — 따로 막으려면 deployment protection 설정.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §4: Smoke Test -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§4. 배포 후 Smoke Test — 살았는지 확인</h2>
+  <p class="sec-sub">"빌드 성공 = 사이트 살음"이 아님. 진짜 200 응답 받는지</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">.github/workflows/smoke.yml</span>
+      <span class="codebox-tag">배포 후</span>
+    </div>
+    <div class="codebox-body"><span class="h">name:</span> Smoke Test
+
+<span class="h">on:</span>
+  <span class="key">deployment_status:</span>  <span class="cmt"># Vercel 배포 완료 후 자동</span>
+
+<span class="h">jobs:</span>
+  <span class="key">smoke:</span>
+    <span class="key">if:</span> github.event.deployment_status.state == <span class="str">'success'</span>
+    runs-on: ubuntu-latest
+    steps:
+      - <span class="key">name:</span> Health check
+        <span class="key">run:</span> |
+          URL=<span class="str">"${{ github.event.deployment_status.target_url }}"</span>
+          curl -fsSL <span class="str">"$URL/"</span> > /dev/null
+          curl -fsSL <span class="str">"$URL/stage1"</span> > /dev/null
+          curl -fsSL -X POST <span class="str">"$URL/api/chat"</span> \
+            -H <span class="str">"Content-Type: application/json"</span> \
+            -d <span class="str">'{"system":"한 단어 답.","messages":[{"role":"user","content":"hi"}],"max_tokens":10}'</span>
+
+      - <span class="key">name:</span> 텔레그램 성공 알림
+        <span class="key">if:</span> success()
+        <span class="key">run:</span> |
+          curl -X POST <span class="str">"https://api.telegram.org/bot${{ secrets.TG_BOT }}/sendMessage"</span> \
+            -d chat_id=<span class="str">"${{ secrets.TG_CHAT }}"</span> \
+            -d text=<span class="str">"✅ 배포 OK · $URL"</span>
+
+      - <span class="key">name:</span> 텔레그램 실패 알림
+        <span class="key">if:</span> failure()
+        <span class="key">run:</span> |
+          curl -X POST <span class="str">"https://api.telegram.org/bot${{ secrets.TG_BOT }}/sendMessage"</span> \
+            -d chat_id=<span class="str">"${{ secrets.TG_CHAT }}"</span> \
+            -d text=<span class="str">"🚨 배포 후 smoke test 실패 · $URL"</span></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §5: 자동 롤백 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§5. 자동 롤백 — 사고 시 1분 복구</h2>
+
+  <p class="body">production이 망가졌을 때 가장 빠른 복구 = 이전 배포로 즉시 되돌리기. Vercel CLI 한 줄로 가능. GitHub Actions에 미리 셋업해두면 텔레그램 알림 받자마자 바로 실행.</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">긴급 롤백 — 1줄</span>
+      <span class="codebox-tag">로컬 또는 GitHub Actions</span>
+    </div>
+    <div class="codebox-body"><span class="cmt"># 방법 1 — Vercel CLI 직접</span>
+<span class="key">$</span> vercel rollback           <span class="cmt"># 직전 배포로</span>
+<span class="key">$</span> vercel rollback dpl_xxx   <span class="cmt"># 특정 배포 ID로</span>
+
+<span class="cmt"># 방법 2 — GitHub Actions 수동 트리거</span>
+<span class="cmt"># .github/workflows/rollback.yml</span>
+<span class="h">on:</span>
+  <span class="key">workflow_dispatch:</span>  <span class="cmt"># 수동 실행 버튼</span>
+    inputs:
+      reason: { description: <span class="str">'롤백 사유'</span>, required: <span class="kw">true</span> }
+<span class="h">jobs:</span>
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - <span class="key">run:</span> npx vercel rollback --token=${{ secrets.VERCEL_TOKEN }}
+      - <span class="key">run:</span> |
+          curl -X POST <span class="str">"https://api.telegram.org/bot${{ secrets.TG_BOT }}/sendMessage"</span> \
+            -d chat_id=<span class="str">"${{ secrets.TG_CHAT }}"</span> \
+            -d text=<span class="str">"⚠️ 롤백 실행됨: ${{ inputs.reason }}"</span></div>
+  </div>
+
+  <div class="callout red">
+    <div class="cl-label">🚨 롤백 후 반드시</div>
+    <div class="cl-body">
+      ① 사용자에게 "일시적 장애 → 복구 완료" 공지<br>
+      ② DB는 롤백 안 됨 (코드만 롤백) — 데이터 정합성 확인<br>
+      ③ 원인 분석 + CLAUDE.md "실전 교훈"에 추가
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §6: GitHub Secrets -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§6. GitHub Secrets — 키 안전하게</h2>
+
+  <p class="body">GitHub Actions에서 사용할 모든 키는 <em>repo → Settings → Secrets and variables → Actions</em>에 등록. 절대 yml에 직접 쓰지 말 것.</p>
+
+  <div class="check-list">
+    <div class="check-row"><strong>VERCEL_TOKEN</strong> — Vercel 대시보드 → Settings → Tokens 발급</div>
+    <div class="check-row"><strong>VERCEL_ORG_ID</strong> + <strong>VERCEL_PROJECT_ID</strong> — <code>vercel link</code> 실행 후 .vercel/project.json에서 확인</div>
+    <div class="check-row"><strong>TG_BOT</strong> + <strong>TG_CHAT</strong> — 텔레그램 봇 토큰 + chat ID</div>
+    <div class="check-row"><strong>SUPABASE_SERVICE_KEY</strong> — E2E 테스트용 (production 아닌 dev 프로젝트만!)</div>
+    <div class="check-row"><strong>ANTHROPIC_API_KEY</strong> — smoke test에서 /api/chat 검증 시 (또는 별도 테스트 키)</div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">⚠️ Secret 회전</div>
+    <div class="cl-body">
+      6개월에 한 번 모든 토큰 재발급. 회전 후 GitHub Secrets·Vercel env·로컬 .env.local 모두 같은 날에 동기화. 잊으면 다음 push에서 CI 실패.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §7: 1인 SaaS 권장 워크플로우 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§7. 1인 SaaS 권장 워크플로우 — 단순하게</h2>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>단계</th><th>해야 함</th><th>안 해도 됨</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>출시 직전 (MVP)</strong></td>
+          <td>main에 push → Vercel 자동 배포 + Sentry</td>
+          <td>CI/CD·E2E·롤백 자동화 (오버킬)</td>
+        </tr>
+        <tr>
+          <td><strong>유료 구독자 1~10명</strong></td>
+          <td>+ ci.yml (typecheck·lint·test) + smoke test</td>
+          <td>여전히 단순. CI는 가벼운 게이트만</td>
+        </tr>
+        <tr>
+          <td><strong>10~100명</strong></td>
+          <td>+ E2E 테스트 + 텔레그램 알림 + 자동 롤백 셋업</td>
+          <td>다중 환경 분리는 아직 X</td>
+        </tr>
+        <tr>
+          <td><strong>100~1000명</strong></td>
+          <td>+ Preview 환경 + DB 마이그레이션 자동화 + 보안 스캔</td>
+          <td>마이크로서비스·Kubernetes (오버킬)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout purple">
+    <div class="cl-label">🎯 가장 큰 함정 — 처음부터 풀스펙 CI/CD</div>
+    <div class="cl-body">
+      유료 구독자 0명인데 GitHub Actions 5개·환경 3개·Slack 통합... = 배포 자체가 1시간씩 걸림. <em>유료 구독자 수에 비례해서 점진적으로 추가.</em> Vercel 자동 배포 한 가지만으로도 첫 1주는 충분.
+    </div>
+  </div>
+</section>
+
+<div class="nav-bottom">
+  <a class="btn-nav" href="performance.html">← 성능·비용</a>
+  <a class="btn-nav" href="cs-ops.html">CS·운영 SOP →</a>
+</div>
+
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  let progress={};
+  try{progress=JSON.parse(localStorage.getItem('vibe-master-progress'))||{};}catch(e){}
+  const stages=progress.stages||{};
+  document.querySelectorAll('.snav-pill').forEach(pill=>{
+    const m=pill.getAttribute('href')?.match(/stage(\d)/);
+    if(!m)return;
+    if(stages[m[1]]?.completed)pill.classList.add('completed');
+  });
+});
+</script>
+</body>
+</html>
