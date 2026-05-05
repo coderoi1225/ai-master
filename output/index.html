@@ -213,7 +213,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="nav-links">
     <a class="nav-link" href="#stages">9 Stage</a>
     <a class="nav-link" href="#journey">학습 여정</a>
-    <a class="nav-link" href="#principles">디자인 원칙</a>
+    <a class="nav-link" href="troubleshooting.html" style="color:var(--red);">🚨 트러블슈팅</a>
     <a class="nav-link" href="#cta">시작하기</a>
   </div>
 </div>
@@ -608,5 +608,38 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 </div>
 
+<script>
+// === Index 진도 시각화 (localStorage 읽기) ===
+window.addEventListener('DOMContentLoaded',()=>{
+  let progress={};
+  try{progress=JSON.parse(localStorage.getItem('vibe-master-progress'))||{};}catch(e){}
+  const stages=progress.stages||{};
+  let completedCount=0;
+  // 진도 바 업데이트
+  for(let i=1;i<=9;i++){
+    const seg=document.querySelector(`.progress-seg.s${i}`);
+    if(stages[i]?.completed){
+      completedCount++;
+      seg?.classList.add('done');
+    }else{
+      seg?.style.setProperty('opacity','0.25');
+    }
+    // stage 카드에 완료 배지
+    const card=document.querySelector(`.stage-card.s${i}`);
+    if(stages[i]?.completed&&card){
+      const badge=document.createElement('div');
+      badge.style.cssText='position:absolute;top:14px;right:14px;background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:4px 9px;border-radius:99px;letter-spacing:.5px;z-index:5;';
+      badge.textContent='✓ 완료';
+      card.appendChild(badge);
+    }
+  }
+  // 진도 텍스트
+  const pct=document.querySelector('.progress-pct');
+  if(pct)pct.textContent=`${String(completedCount).padStart(2,'0')} / 09 완주`;
+  // 통계 — 완성된 서비스 수치
+  const heroStat=document.querySelectorAll('.stat-num.gold');
+  if(heroStat[0]&&completedCount===9)heroStat[0].textContent='✓';
+});
+</script>
 </body>
 </html>

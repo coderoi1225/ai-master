@@ -278,9 +278,12 @@ tbody td strong{color:var(--text);}
   .nav-next{flex-direction:column;gap:14px;align-items:stretch;}
   .stage-nav{justify-content:flex-start;}
 }
+
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+.snav-pill{position:relative;}
 </style>
 </head>
-<body>
+<body data-stage="1">
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -982,6 +985,71 @@ function fmt(t){
     .replace(/\n\n+/g,'</p><p style="margin-bottom:10px;color:var(--muted2)">')
     .replace(/\n/g,'<br>');
 }
+
+// === 진도 저장 시스템 (localStorage) ===
+const PROGRESS_KEY = 'vibe-master-progress';
+function getProgress(){
+  try{return JSON.parse(localStorage.getItem(PROGRESS_KEY))||{};}catch(e){return{};}
+}
+function saveProgress(p){
+  try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(p));}catch(e){}
+}
+function markStageMission(stage,idx,done){
+  const p=getProgress();
+  p.stages=p.stages||{};
+  p.stages[stage]=p.stages[stage]||{missions:{}};
+  p.stages[stage].missions[idx]=done;
+  // 모든 미션 done이면 stage 완료 표시
+  const items=document.querySelectorAll('.mi-check');
+  const allDone=Array.from(items).every(c=>c.classList.contains('done'));
+  if(allDone&&items.length>0){
+    p.stages[stage].completed=true;
+    p.stages[stage].completedAt=new Date().toISOString();
+  }else{
+    p.stages[stage].completed=false;
+  }
+  saveProgress(p);
+  updateNavBadges();
+}
+function loadStageMissions(stage){
+  const p=getProgress();
+  const stageData=p.stages?.[stage];
+  if(!stageData?.missions)return;
+  document.querySelectorAll('.mi-check').forEach((c,i)=>{
+    if(stageData.missions[i])c.classList.add('done');
+  });
+}
+function updateNavBadges(){
+  const p=getProgress();
+  document.querySelectorAll('.snav-pill').forEach(pill=>{
+    const m=pill.getAttribute('href')?.match(/stage(\d)/);
+    if(!m)return;
+    const n=m[1];
+    const done=p.stages?.[n]?.completed;
+    if(done)pill.classList.add('completed');
+    else pill.classList.remove('completed');
+  });
+}
+// 미션 체크박스 클릭 → 저장
+function attachMissionListeners(stage){
+  document.querySelectorAll('.mi-check').forEach((c,i)=>{
+    const orig=c.getAttribute('onclick');
+    c.removeAttribute('onclick');
+    c.addEventListener('click',()=>{
+      c.classList.toggle('done');
+      markStageMission(stage,i,c.classList.contains('done'));
+    });
+  });
+}
+// init
+window.addEventListener('DOMContentLoaded',()=>{
+  const stage=document.body.dataset.stage;
+  if(stage){
+    loadStageMissions(stage);
+    attachMissionListeners(stage);
+  }
+  updateNavBadges();
+});
 </script>
 </body>
 </html>
