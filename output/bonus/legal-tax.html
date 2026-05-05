@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER 부록 — 법무·세무·사업자 등록 (한국 1인 SaaS)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --accent:#d4a017;--accent2:#eab308;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--orange:#f97316;--teal:#14b8a6;--pink:#ec4899;
+  --cyan:#06b6d4;--gold:#d4a017;--gold2:#eab308;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-weight:900;font-size:17px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{color:var(--accent);}
+.bonus-badge{background:rgba(212,160,23,.12);color:var(--accent2);border:1px solid rgba(212,160,23,.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px;}
+.bonus-badge::before{content:'📜 ';}
+.back-link{font-size:12px;color:var(--muted2);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--text);}
+
+/* ── STAGE NAV ── */
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}.snav-pill.s2{--c:#10b981;}.snav-pill.s3{--c:#8b5cf6;}.snav-pill.s4{--c:#ec4899;}.snav-pill.s5{--c:#f97316;}.snav-pill.s6{--c:#14b8a6;}.snav-pill.s7{--c:#f59e0b;}.snav-pill.s8{--c:#06b6d4;}.snav-pill.s9{--c:#d4a017;}
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+
+/* ── CONTAINER ── */
+.container{max-width:920px;margin:0 auto;padding:50px 32px 100px;}
+
+/* ── HERO ── */
+.hero{margin-bottom:40px;text-align:center;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-size:42px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin-bottom:14px;}
+.hero h1 span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero-lead{font-size:14px;color:var(--muted2);line-height:1.85;max-width:620px;margin:0 auto;}
+
+/* ── DISCLAIMER ── */
+.disclaimer{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.22);border-radius:11px;padding:14px 18px;margin:24px 0 30px;font-size:12px;color:var(--muted2);line-height:1.75;}
+.disclaimer strong{color:var(--red);}
+
+/* ── SPINE ── */
+.spine{background:linear-gradient(135deg,rgba(212,160,23,.07),rgba(239,68,68,.04));border:1px solid rgba(212,160,23,.22);border-radius:14px;padding:22px 26px;margin-bottom:36px;}
+.spine-text{font-size:18px;font-weight:700;color:var(--text);line-height:1.55;font-family:'Gowun Batang',serif;text-align:center;}
+.spine-text span{color:var(--accent2);}
+
+/* ── SECTION ── */
+.section{margin-bottom:50px;scroll-margin-top:130px;}
+.sec-title{font-size:22px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.sec-bar{width:3px;height:24px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+.sec-sub{font-size:13px;color:var(--muted2);margin-bottom:22px;padding-left:13px;line-height:1.7;}
+p.body{font-size:13.5px;color:var(--muted2);line-height:1.95;margin-bottom:14px;}
+p.body strong{color:var(--text);}
+p.body em{color:var(--accent2);font-style:normal;font-weight:600;}
+
+/* ── CALLOUTS ── */
+.callout{border-radius:11px;padding:16px 20px;margin:18px 0;}
+.callout.gold{background:rgba(212,160,23,.07);border:1px solid rgba(212,160,23,.22);}
+.callout.red{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);}
+.callout.green{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);}
+.callout.blue{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);}
+.callout.yellow{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);}
+.cl-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.callout.gold .cl-label{color:var(--accent2);}
+.callout.red .cl-label{color:var(--red);}
+.callout.green .cl-label{color:var(--green);}
+.callout.blue .cl-label{color:var(--blue2);}
+.callout.yellow .cl-label{color:var(--yellow);}
+.cl-body{font-size:13px;color:var(--muted2);line-height:1.85;}
+.cl-body strong{color:var(--text);}
+.cl-body em{color:var(--accent2);font-style:normal;}
+.cl-body code{background:var(--s2);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--orange);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--s2);}
+thead th{padding:10px 14px;text-align:left;font-weight:700;color:var(--muted2);font-size:11px;letter-spacing:.5px;white-space:nowrap;}
+tbody tr{border-top:1px solid var(--border);}
+tbody tr:hover{background:var(--s2);}
+tbody td{padding:10px 14px;color:var(--muted2);line-height:1.65;vertical-align:top;}
+tbody td strong{color:var(--text);}
+tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+/* ── STEP CARDS ── */
+.steps{margin:16px 0;}
+.step{display:grid;grid-template-columns:36px 1fr;gap:14px;background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:8px;align-items:flex-start;border-left:3px solid var(--accent);}
+.step-num{width:32px;height:32px;border-radius:8px;background:rgba(212,160,23,.15);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;flex-shrink:0;}
+.step-content{flex:1;}
+.step-title{font-size:13.5px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.step-desc{font-size:12px;color:var(--muted2);line-height:1.75;}
+.step-meta{font-size:10.5px;color:var(--muted);margin-top:5px;font-family:'JetBrains Mono',monospace;}
+
+/* ── COMPARE ── */
+.compare-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0;}
+.comp-card{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:16px 18px;}
+.comp-card.recommend{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+.comp-tag{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1.5px;margin-bottom:6px;text-transform:uppercase;}
+.comp-card.recommend .comp-tag{color:var(--green);}
+.comp-name{font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;}
+.comp-list{font-size:12px;color:var(--muted2);line-height:1.95;}
+.comp-list strong{color:var(--text);}
+
+/* ── TIMELINE ── */
+.timeline{margin:16px 0;}
+.tl-row{display:grid;grid-template-columns:90px 1fr;gap:14px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 16px;margin-bottom:7px;align-items:center;}
+.tl-when{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);font-weight:800;}
+.tl-task{font-size:12px;color:var(--muted2);line-height:1.7;}
+.tl-task strong{color:var(--text);}
+
+/* ── CHECKLIST ── */
+.check-list{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin:14px 0;}
+.check-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted2);line-height:1.85;padding:5px 0;}
+.check-row::before{content:'☐';color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0;}
+.check-row strong{color:var(--text);}
+.check-row code{background:var(--s1);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+/* ── RESOURCE LINKS ── */
+.res-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0;}
+.res-card{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;text-decoration:none;color:inherit;transition:all .15s;}
+.res-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.res-name{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+.res-desc{font-size:11px;color:var(--muted);line-height:1.55;}
+
+/* ── TEMPLATE BOX ── */
+.tmpl-box{background:#05080d;border:1px solid var(--border2);border-radius:11px;overflow:hidden;margin:14px 0;}
+.tmpl-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0b1018;border-bottom:1px solid var(--border);}
+.tmpl-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent2);font-weight:700;}
+.tmpl-copy{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:11px;font-family:'Noto Sans KR',sans-serif;transition:color .2s;}
+.tmpl-copy:hover{color:var(--accent2);}
+.tmpl-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.85;white-space:pre-wrap;}
+.tmpl-body .h{color:var(--accent2);font-weight:700;}
+.tmpl-body .cmt{color:var(--muted);}
+
+/* ── INCIDENT CARDS ── */
+.inc-list{margin:14px 0;}
+.inc-card{display:grid;grid-template-columns:36px 1fr;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;align-items:flex-start;border-left:3px solid var(--red);}
+.inc-num{width:30px;height:30px;border-radius:7px;background:rgba(239,68,68,.15);color:var(--red);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:800;flex-shrink:0;}
+.inc-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.inc-detail{font-size:11.5px;color:var(--muted2);line-height:1.7;}
+.inc-detail strong{color:var(--green);}
+
+/* ── NAV ── */
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+.btn-nav{background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:10px;padding:13px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s;text-decoration:none;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent2);}
+.divider{border:none;border-top:1px solid var(--border);margin:42px 0;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+@media(max-width:768px){
+  .container{padding:30px 16px 80px;}
+  .hero h1{font-size:28px;}
+  .compare-grid,.res-grid{grid-template-columns:1fr;}
+  .tl-row{grid-template-columns:1fr;}
+  .stage-nav{justify-content:flex-start;padding:9px 16px;}
+  .nav-bottom{flex-direction:column;gap:14px;align-items:stretch;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="bonus-badge">부록 · 법무·세무</span>
+  </div>
+  <a class="back-link" href="../index.html">← 커리큘럼 홈</a>
+</div>
+
+<!-- STAGE NAV -->
+<nav class="stage-nav">
+  <a href="../index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="../stage1.html" class="snav-pill s1">1</a>
+  <a href="../stage2.html" class="snav-pill s2">2</a>
+  <a href="../stage3.html" class="snav-pill s3">3</a>
+  <a href="../stage4.html" class="snav-pill s4">4</a>
+  <a href="../stage5.html" class="snav-pill s5">5</a>
+  <a href="../stage6.html" class="snav-pill s6">6</a>
+  <a href="../stage7.html" class="snav-pill s7">7</a>
+  <a href="../stage8.html" class="snav-pill s8">8</a>
+  <a href="../stage9.html" class="snav-pill s9">9</a>
+</nav>
+
+<!-- CONTAINER -->
+<div class="container">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">★ 한국 1인 SaaS 운영 실무 · BONUS</div>
+  <h1>혼자 굴리려면<br><span>합법으로 굴려야</span> 한다</h1>
+  <p class="hero-lead">9 Stage가 안 다루는 가장 큰 공백 — 사업자 등록·세무·약관·개인정보. 다른 강의도 거의 안 다루는 영역이지만, 이걸 모르면 첫 100명 넘기 전에 사고가 납니다.</p>
+</section>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>⚠️ 면책 안내</strong> — 이 문서는 일반적인 가이드이며 세무·법무 전문가의 상담을 대체하지 않습니다. 매출 발생 시 세무사 상담을 강력 권장. 모든 법령·세율은 2026년 초 기준 — 최신 정보는 <strong>국세청·공정거래위원회·KISA 공식 사이트</strong>에서 확인하세요.
+</div>
+
+<!-- SPINE -->
+<div class="spine">
+  <div class="spine-text">"기술은 AI가, 영혼은 사람이.<br><span>합법은 사장이.</span>"</div>
+</div>
+
+<hr class="divider">
+
+<!-- ─── §1: 사업자 등록 ─── -->
+<section class="section" id="biz-reg">
+  <h2 class="sec-title"><div class="sec-bar"></div>§1. 사업자 등록 — 언제·어떻게</h2>
+  <p class="sec-sub">"매출 0원이어도 등록부터" — Stage 6 결제 받기 시작 전에 끝내야 합니다</p>
+
+  <p class="body">한국에서 결제 PG 계약(토스페이먼츠 등)은 <em>사업자 등록증이 있어야</em> 가능합니다. Stage 6 라이브 URL을 띄우려면 그 전에 등록을 마쳐야 합니다. 등록은 <strong>홈택스 온라인으로 30분</strong>이면 끝납니다.</p>
+
+  <div class="callout gold">
+    <div class="cl-label">🎯 1인 SaaS는 99% "간이과세 개인사업자"부터</div>
+    <div class="cl-body">
+      매출 1억 4천만 원 미만 = <strong>간이과세</strong>가 유리 (부가세 부담 작고 신고 1회/년). 그 이상 = 일반과세로 자동 전환. 법인은 매출 5억+ 또는 투자 받을 때 고려.
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="comp-card recommend">
+      <div class="comp-tag">★ 1인 창업가 추천</div>
+      <div class="comp-name">간이과세 개인사업자</div>
+      <div class="comp-list">
+        <strong>✓</strong> 부가세 1.5~4% (일반 10% 대비)<br>
+        <strong>✓</strong> 부가세 신고 연 1회 (1월)<br>
+        <strong>✓</strong> 등록 즉시 가능, 비용 0원<br>
+        <strong>✗</strong> 매출 1억 4천 초과 시 자동 일반 전환<br>
+        <strong>✗</strong> 일부 매입 부가세 환급 제한
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-tag">매출 1억+ 또는 B2B 위주</div>
+      <div class="comp-name">일반과세 개인사업자</div>
+      <div class="comp-list">
+        <strong>✓</strong> 매입 부가세 100% 환급<br>
+        <strong>✓</strong> 세금계산서 발행 가능 (B2B 필수)<br>
+        <strong>✗</strong> 부가세 10% 부담<br>
+        <strong>✗</strong> 부가세 신고 연 2회 (1·7월)<br>
+        <strong>✗</strong> 매출 클 때 세무사 필수 (월 10~30만원)
+      </div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">홈택스 가입 + 공동인증서 (구 공인인증서)</div>
+        <div class="step-desc">개인 공동인증서 미리 발급 (은행에서). 홈택스(hometax.go.kr) 가입 → 인증서 등록.</div>
+        <div class="step-meta">⏱ 30분 · 💰 무료</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">홈택스 → 신청/제출 → 사업자등록 신청</div>
+        <div class="step-desc">개인 → 사업자등록 → "정보통신업" 또는 "전자상거래 소매업" 선택. SaaS는 보통 <code>업태: 정보통신업</code> + <code>종목: 응용 소프트웨어 개발 및 공급업 (62010)</code>.</div>
+        <div class="step-meta">⏱ 15분 입력</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">사업장 주소 — 자택 가능 (집 주소)</div>
+        <div class="step-desc">1인 SaaS는 자택 주소 OK. 임대차 계약서는 미요구. 부모님 집이면 동의서 필요할 수 있음.</div>
+        <div class="step-meta">📌 자택 = 임대차 계약서 X</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">2~3일 후 사업자등록증 발급</div>
+        <div class="step-desc">홈택스에서 PDF 다운로드 가능. 사업자번호 (예: 123-45-67890) 확인.</div>
+        <div class="step-meta">⏱ 평일 2~3영업일</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">사업용 통장 개설 + 사업용 카드</div>
+        <div class="step-desc">은행에서 사업자등록증 들고 사업용 통장. 개인 통장과 분리 — 세무·회계가 명확해짐. 사업용 신용카드도 같이.</div>
+        <div class="step-meta">⏱ 1시간 · 토스뱅크·카카오뱅크 사업자 통장 추천</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">💡 매출 0원이어도 등록 이유</div>
+    <div class="cl-body">
+      "매출 나면 등록"하면 <strong>이미 늦음.</strong> Stage 6 라이브 URL → 결제 PG 신청 → PG가 사업자번호 요구 → 등록증 없으면 즉시 막힘. 첫 결제 받기 일주일 전에 등록 필수.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §2: 통신판매업 신고 ─── -->
+<section class="section" id="ecomm">
+  <h2 class="sec-title"><div class="sec-bar"></div>§2. 통신판매업 신고 — 거의 모든 SaaS 필수</h2>
+  <p class="sec-sub">"전자상거래법" — 온라인으로 돈 받는 모든 사업의 의무 신고</p>
+
+  <p class="body">사업자 등록과 별개로 <em>통신판매업 신고</em>가 필요합니다. 온라인 결제를 받으면 의무. 신고 없이 운영하면 <strong>3,000만원 이하 과태료</strong>.</p>
+
+  <div class="callout green">
+    <div class="cl-label">✅ 면제 조건 — 직전년도 매출 1,200만원 미만 (2026 기준)</div>
+    <div class="cl-body">
+      매출이 적은 첫 해는 <strong>면제 신청</strong> 가능 (간소화). 단, 면제 신청도 정부24에서 따로 해야 함. 매출 1,200만 넘으면 즉시 정식 신고 전환.
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">정부24 → 통신판매업 신고</div>
+        <div class="step-desc">gov.kr 검색 → 통신판매업 신고. 사업자등록증·계좌사본 업로드.</div>
+        <div class="step-meta">⏱ 20분 · 💰 등록면허세 약 5만원 (지자체별 차이)</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">구매안전서비스 가입증서</div>
+        <div class="step-desc">에스크로 또는 PG사의 구매안전서비스 증서 첨부. 토스페이먼츠 가입 시 자동 발급.</div>
+        <div class="step-meta">📌 결제 PG 가입이 통신판매업 신고보다 먼저</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">관할 시·군·구청 처리 → 신고증 발급</div>
+        <div class="step-desc">5~10영업일 후 신고번호 발급. 웹사이트 푸터에 번호 게재 의무.</div>
+        <div class="step-meta">⏱ 5~10영업일 · 신고번호 형식: 2026-서울강남-12345</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout red">
+    <div class="cl-label">📌 웹사이트 푸터 의무 표기 7가지</div>
+    <div class="cl-body">
+      통신판매업 신고 후 <strong>모든 페이지 푸터</strong>에 다음 7가지 의무 표기:<br>
+      ① 상호 ② 대표자명 ③ 사업장 주소 ④ 전화번호 ⑤ 이메일 ⑥ 사업자등록번호 ⑦ 통신판매업 신고번호<br><br>
+      누락 시 과태료. 디자인이 망가지더라도 반드시.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §3: 부가세 ─── -->
+<section class="section" id="vat">
+  <h2 class="sec-title"><div class="sec-bar"></div>§3. 부가세 — 가장 많이 틀리는 세금</h2>
+  <p class="sec-sub">매출에서 나가는 게 아니라 "고객에게 받아 정부에 전달"하는 돈</p>
+
+  <p class="body">월 9,900원 구독료에는 <em>부가세 10%가 포함</em>되어 있습니다. 즉 9,000원이 우리 매출, 900원이 정부에 낼 돈. 처음에는 9,900원이 다 매출인 줄 알다가 부가세 폭탄 맞는 게 단골 사고.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>구분</th><th>간이과세자</th><th>일반과세자</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>부가세율</strong></td>
+          <td>1.5~4% (업종별)</td>
+          <td>10% 일률</td>
+        </tr>
+        <tr>
+          <td><strong>신고 주기</strong></td>
+          <td>연 1회 (1.1~1.25)</td>
+          <td>연 2회 (1·7월)</td>
+        </tr>
+        <tr>
+          <td><strong>매입 환급</strong></td>
+          <td>제한적</td>
+          <td>100% 환급</td>
+        </tr>
+        <tr>
+          <td><strong>예시 (월 매출 100만원)</strong></td>
+          <td>월 1.5~4만원</td>
+          <td>월 9만원</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">💸 사업용 카드로 결제하면 부가세 환급</div>
+    <div class="cl-body">
+      Anthropic API·Vercel·Supabase·SendGrid 등 모두 <strong>사업용 카드로 결제</strong>해야 매입 부가세 환급 가능. 일반과세자는 100% 환급. 간이과세자는 일부 환급. <em>개인 카드로 결제 = 환급 0원.</em>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <div class="cl-label">📊 부가세 계산 예시 (간이과세자, 정보통신업 4%)</div>
+    <div class="cl-body">
+      <strong>2026년 매출:</strong> 월 50만원 × 12개월 = 600만원<br>
+      <strong>부가세:</strong> 600만 × 4% = 24만원<br>
+      <strong>매입세액 공제:</strong> Vercel·API 등 사업비용 200만 × 0.5% (간이) = 1만원<br>
+      <strong>2027년 1월 신고 → 납부:</strong> 24만 - 1만 = <strong>23만원</strong><br><br>
+      <em>매월 매출의 4%는 따로 빼두기.</em> 24만원이 갑자기 빠지면 현금흐름 망가짐.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §4: 종합소득세 ─── -->
+<section class="section" id="income-tax">
+  <h2 class="sec-title"><div class="sec-bar"></div>§4. 종합소득세 — 5월의 큰 산</h2>
+  <p class="sec-sub">개인사업자의 진짜 소득세. 매년 5월 신고·납부</p>
+
+  <p class="body">부가세 외에 <em>매년 5월에 종합소득세 신고</em>가 별도로 있습니다. 개인사업자의 진짜 "내가 번 돈"에 대한 세금. 매출이 작을 땐 <strong>홈택스 모두채움 신고</strong>로 셀프 가능, 매출 5천만+ 넘으면 세무사 필요.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>연 매출</th><th>처리 방법</th><th>세무사 비용</th><th>신고 형태</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>2,400만 미만</td>
+          <td>홈택스 모두채움 (셀프)</td>
+          <td>0원</td>
+          <td>단순경비율</td>
+        </tr>
+        <tr>
+          <td>2,400만~7,500만</td>
+          <td>홈택스 셀프 또는 세무대리인</td>
+          <td>10~30만원/년</td>
+          <td>기준경비율 또는 간편장부</td>
+        </tr>
+        <tr>
+          <td>7,500만~1억 5천</td>
+          <td><strong>세무사 필수</strong></td>
+          <td>월 10~20만원</td>
+          <td>간편장부</td>
+        </tr>
+        <tr>
+          <td>1억 5천+</td>
+          <td>세무사 필수</td>
+          <td>월 20~50만원</td>
+          <td>복식부기 (전문가 영역)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout gold">
+    <div class="cl-label">📅 1인 SaaS 세금 1년 캘린더</div>
+    <div class="cl-body">
+      <strong>1월:</strong> 부가세 신고 (간이) / 1차 신고 (일반) — 매출의 1.5~10%<br>
+      <strong>3월:</strong> 4대보험 정산 (가입했다면)<br>
+      <strong>5월:</strong> <strong>종합소득세 신고 (가장 큼)</strong> — 1년치 소득의 6~45%<br>
+      <strong>7월:</strong> 부가세 2차 신고 (일반과세자만)<br>
+      <strong>11월:</strong> 종합소득세 중간예납 (전년 세액의 절반)<br><br>
+      <em>5월에 한 번에 큰 돈 나가는 게 보통</em> — 매월 매출의 10%는 세금 통장에 따로.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §5: 약관·개인정보·환불 ─── -->
+<section class="section" id="docs">
+  <h2 class="sec-title"><div class="sec-bar"></div>§5. 필수 4종 문서 — 푸터에 반드시</h2>
+  <p class="sec-sub">이용약관 · 개인정보처리방침 · 환불정책 · 사업자정보</p>
+
+  <p class="body">웹사이트 푸터에 4종 페이지 링크가 의무. 없으면 과태료 + 분쟁 시 무방비. 처음 만들 때 <em>변호사 한 번 검토 (50~100만원)</em>가 가장 안전하지만, 비용 부담 시 검증된 템플릿 사용.</p>
+
+  <div class="check-list">
+    <div class="check-row"><strong>이용약관</strong> — 서비스 이용 조건·책임 한계·금지 행위·해지 절차 명시 (전자상거래법 제17조)</div>
+    <div class="check-row"><strong>개인정보처리방침</strong> — 수집 항목·이용 목적·보유 기간·파기 절차·DPO 연락처 (개인정보보호법 제30조)</div>
+    <div class="check-row"><strong>환불정책</strong> — 청약철회 7일·구독 해지 절차·환불 기준 (전자상거래법 제17조)</div>
+    <div class="check-row"><strong>사업자정보</strong> — 푸터 7가지 의무 표기 (§2에서 설명)</div>
+    <div class="check-row"><strong>마케팅 정보 수신 동의</strong> — 가입 시 별도 체크박스 (정보통신망법 제50조)</div>
+  </div>
+
+  <div class="callout red">
+    <div class="cl-label">🚱 가장 흔한 실수 — 개인정보처리방침 복붙</div>
+    <div class="cl-body">
+      다른 사이트 PIPP를 그대로 베끼면 <strong>실제 수집 항목과 불일치</strong> → 과태료 + 신뢰도 폭락. 우리 서비스가 진짜로 수집하는 것만 정확히 명시. <em>이메일·이름·결제정보·접속 IP</em> 정도면 명시 단순.
+    </div>
+  </div>
+
+  <div class="tmpl-box">
+    <div class="tmpl-head">
+      <span class="tmpl-name">개인정보처리방침 — 1인 SaaS 최소 템플릿</span>
+      <button class="tmpl-copy" onclick="cp(this)">복사</button>
+    </div>
+    <div class="tmpl-body"><span class="h">1. 수집하는 개인정보 항목</span>
+- 필수: 이메일, 비밀번호 (해시), 이름
+- 선택: 카카오 프로필 정보 (소셜 로그인 시)
+- 결제: 카드 마지막 4자리, 빌링키 (실제 카드번호는 PG사 보관)
+- 자동: 접속 IP, 쿠키, 접속 로그
+
+<span class="h">2. 이용 목적</span>
+- 서비스 제공 (계정 관리, 콘텐츠 발송)
+- 결제 처리
+- 부정 이용 방지
+- 마케팅 (별도 동의 시에만)
+
+<span class="h">3. 보유·이용 기간</span>
+- 회원 정보: 회원 탈퇴 시까지 (관계법령 보존 의무 경우 별도)
+- 결제 기록: 5년 (전자상거래법)
+- 접속 로그: 3개월 (통신비밀보호법)
+
+<span class="h">4. 제3자 제공</span>
+- 이메일 발송: Resend (미국)
+- 결제 처리: 토스페이먼츠 (한국)
+- 인증: Supabase Auth (미국)
+<span class="cmt">→ 국외 이전 시 별도 동의 필요</span>
+
+<span class="h">5. 개인정보 보호책임자 (DPO)</span>
+- 이름: [본인 이름]
+- 이메일: privacy@my-newsletter.com
+- 전화: [필수, 본인 번호 또는 050 가상번호]
+
+<span class="h">6. 권리 행사</span>
+- 열람·정정·삭제·처리정지 권리
+- privacy@... 메일로 요청 → 30일 내 처리
+
+<span class="h">7. 변경 사항</span>
+- 시행일: 2026-MM-DD
+- 변경 시 7일 전 공지</div>
+  </div>
+
+  <div class="res-grid">
+    <a class="res-card" href="https://privacy.go.kr" target="_blank">
+      <div class="res-name">📋 개인정보보호 종합포털</div>
+      <div class="res-desc">PIPP 표준 양식·작성 가이드</div>
+    </a>
+    <a class="res-card" href="https://www.ftc.go.kr" target="_blank">
+      <div class="res-name">⚖️ 공정거래위원회</div>
+      <div class="res-desc">전자상거래 표준약관·환불정책</div>
+    </a>
+    <a class="res-card" href="https://hometax.go.kr" target="_blank">
+      <div class="res-name">💰 홈택스</div>
+      <div class="res-desc">사업자 등록·부가세·소득세 신고</div>
+    </a>
+    <a class="res-card" href="https://www.gov.kr" target="_blank">
+      <div class="res-name">🏛 정부24</div>
+      <div class="res-desc">통신판매업 신고·증명서 발급</div>
+    </a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §6: 세무사 선정 ─── -->
+<section class="section" id="cpa">
+  <h2 class="sec-title"><div class="sec-bar"></div>§6. 세무사 — 언제·얼마</h2>
+  <p class="sec-sub">"매출 5천만 넘으면 무조건"이 통상 기준</p>
+
+  <div class="timeline">
+    <div class="tl-row">
+      <div class="tl-when">~연 매출 2400만</div>
+      <div class="tl-task"><strong>셀프 OK.</strong> 홈택스 모두채움 신고 + 영수증 보관만 잘 하면 됨.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">2400~5000만</div>
+      <div class="tl-task"><strong>기장대행 고려.</strong> 월 5~10만원으로 영수증 정리·신고 대행. 본인은 영수증만 사진 찍어 카톡 전송.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">5000만~1억</div>
+      <div class="tl-task"><strong>세무사 필수.</strong> 월 10~20만원. 부가세·소득세 모두 위임. 절세 컨설팅 포함.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">1억+</div>
+      <div class="tl-task"><strong>세무법인 + 회계사.</strong> 월 20~50만원. 복식부기·법인 전환 검토·투자 유치 대비.</div>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <div class="cl-label">💚 세무사 선정 5 체크</div>
+    <div class="cl-body">
+      <strong>1.</strong> SaaS·정보통신업 클라이언트 보유 여부 (도메인 이해)<br>
+      <strong>2.</strong> 카카오톡·이메일 응대 가능 (방문 안 가도 됨)<br>
+      <strong>3.</strong> 월 비용 + 부가세 신고 별도 비용 명확<br>
+      <strong>4.</strong> 절세 컨설팅 포함 여부<br>
+      <strong>5.</strong> 1년 계약 — 안 맞으면 갈아탈 수 있게
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §7: 자주 발생하는 사고 ─── -->
+<section class="section" id="incidents">
+  <h2 class="sec-title"><div class="sec-bar"></div>§7. 자주 발생하는 사고 5가지</h2>
+  <p class="sec-sub">"먼저 안 일은 안 일어난다" — 미리 알면 막을 수 있는 사고들</p>
+
+  <div class="inc-list">
+    <div class="inc-card">
+      <div class="inc-num">1</div>
+      <div>
+        <div class="inc-title">부가세 미준비 → 1월에 갑자기 100만원 폭탄</div>
+        <div class="inc-detail">월 매출 100만원으로 1년 운영 → 1월에 부가세 100만원 청구 → 통장 잔고 부족.<br>
+        <strong>예방:</strong> 매월 매출의 4~10%를 별도 "세금 통장"에 즉시 이체.</div>
+      </div>
+    </div>
+    <div class="inc-card">
+      <div class="inc-num">2</div>
+      <div>
+        <div class="inc-title">개인 카드로 사업비용 결제 → 부가세 환급 0원</div>
+        <div class="inc-detail">Anthropic API·Vercel을 개인 카드로 결제 → 매입 부가세 환급 불가 → 연 수십만원 손해.<br>
+        <strong>예방:</strong> 사업자 등록 즉시 사업용 카드 발급 + 모든 SaaS 결제 옮기기.</div>
+      </div>
+    </div>
+    <div class="inc-card">
+      <div class="inc-num">3</div>
+      <div>
+        <div class="inc-title">통신판매업 미신고 → 첫 사용자 항의·과태료</div>
+        <div class="inc-detail">결제 받기 시작했는데 통신판매업 신고 안 함 → 사용자 환불 분쟁 시 약관 무효 + 과태료 통보.<br>
+        <strong>예방:</strong> Stage 6 라이브 URL과 동시에 통신판매업 신고 시작 (5~10일 걸림).</div>
+      </div>
+    </div>
+    <div class="inc-card">
+      <div class="inc-num">4</div>
+      <div>
+        <div class="inc-title">개인정보처리방침 복붙 → KISA 점검에서 적발</div>
+        <div class="inc-detail">다른 사이트 PIPP 그대로 사용 → 실제 수집 항목과 불일치 → 시정조치 + 과태료 100~500만원.<br>
+        <strong>예방:</strong> 우리 서비스가 진짜 수집하는 것만 정직하게 명시. 5분이면 됨.</div>
+      </div>
+    </div>
+    <div class="inc-card">
+      <div class="inc-num">5</div>
+      <div>
+        <div class="inc-title">마케팅 메일 옵트인 없이 발송 → 신고당함</div>
+        <div class="inc-detail">뉴스레터 서비스인데 가입자 동의 없이 마케팅 메일까지 발송 → 정보통신망법 위반 신고.<br>
+        <strong>예방:</strong> 가입 시 "서비스 이메일" + "마케팅 이메일" 별도 체크박스. 후자는 옵션.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── §8: 한 페이지 체크리스트 ─── -->
+<section class="section" id="checklist">
+  <h2 class="sec-title"><div class="sec-bar"></div>§8. 출시 전 한 페이지 체크리스트</h2>
+  <p class="sec-sub">Stage 6 라이브 URL 띄우기 직전에 한 번 훑어보세요</p>
+
+  <div class="check-list">
+    <div class="check-row"><strong>홈택스 사업자 등록 완료</strong> — 사업자번호 발급</div>
+    <div class="check-row"><strong>사업용 통장·카드</strong> 개설 + Anthropic·Vercel·Supabase 결제 카드 변경</div>
+    <div class="check-row"><strong>토스페이먼츠 가입</strong> + 구매안전서비스 증서 받기</div>
+    <div class="check-row"><strong>통신판매업 신고</strong> 정부24 → 5~10영업일 후 신고번호</div>
+    <div class="check-row"><strong>이용약관</strong> 작성 (전자상거래 표준약관 참고)</div>
+    <div class="check-row"><strong>개인정보처리방침</strong> 작성 (위 템플릿 + 실제 수집 항목으로 수정)</div>
+    <div class="check-row"><strong>환불정책</strong> 작성 (청약철회 7일·구독 해지 절차)</div>
+    <div class="check-row"><strong>웹사이트 푸터 7가지 의무 표기</strong> 게재</div>
+    <div class="check-row"><strong>가입 폼에 마케팅 동의 체크박스 별도</strong> + 기본 미체크</div>
+    <div class="check-row"><strong>050 가상번호</strong> 발급 (개인 번호 노출 방지) — DPO 연락처용</div>
+    <div class="check-row"><strong>privacy@... 이메일</strong> 별도 (개인정보 문의 응대용)</div>
+    <div class="check-row"><strong>매출 추적 엑셀 또는 시트</strong> 준비 (홈택스 미신고 시 필수)</div>
+  </div>
+
+  <div class="callout gold">
+    <div class="cl-label">⏱ 총 소요 시간</div>
+    <div class="cl-body">
+      <strong>최단:</strong> 사업자 등록부터 통신판매업 신고까지 약 <strong>2주</strong>. 약관·PIPP 작성 추가 1주. <em>Stage 6 시작 한 달 전부터 병행하면 안전.</em>
+    </div>
+  </div>
+</section>
+
+<!-- NAV BOTTOM -->
+<div class="nav-bottom">
+  <a class="btn-nav" href="../index.html">← 커리큘럼 홈</a>
+  <a class="btn-nav" href="../troubleshooting.html">트러블슈팅 카탈로그 →</a>
+</div>
+
+</div>
+
+<script>
+function cp(btn){
+  const txt=btn.closest('.tmpl-box').querySelector('.tmpl-body').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    btn.textContent='복사됨 ✓';
+    setTimeout(()=>btn.textContent='복사',2000);
+  });
+}
+// Stage nav 완료 표시 (localStorage)
+window.addEventListener('DOMContentLoaded',()=>{
+  let progress={};
+  try{progress=JSON.parse(localStorage.getItem('vibe-master-progress'))||{};}catch(e){}
+  const stages=progress.stages||{};
+  document.querySelectorAll('.snav-pill').forEach(pill=>{
+    const m=pill.getAttribute('href')?.match(/stage(\d)/);
+    if(!m)return;
+    if(stages[m[1]]?.completed)pill.classList.add('completed');
+  });
+});
+</script>
+</body>
+</html>
