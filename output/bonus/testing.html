@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER 부록 — 테스트 가이드 (Vitest + Playwright)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --accent:#14b8a6;--accent2:#2dd4bf;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--orange:#f97316;--teal:#14b8a6;--pink:#ec4899;
+  --cyan:#06b6d4;--gold:#d4a017;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-weight:900;font-size:17px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{color:var(--accent);}
+.bonus-badge{background:rgba(20,184,166,.12);color:var(--accent2);border:1px solid rgba(20,184,166,.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px;}
+.bonus-badge::before{content:'🧪 ';}
+.back-link{font-size:12px;color:var(--muted2);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--text);}
+
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}.snav-pill.s2{--c:#10b981;}.snav-pill.s3{--c:#8b5cf6;}.snav-pill.s4{--c:#ec4899;}.snav-pill.s5{--c:#f97316;}.snav-pill.s6{--c:#14b8a6;}.snav-pill.s7{--c:#f59e0b;}.snav-pill.s8{--c:#06b6d4;}.snav-pill.s9{--c:#d4a017;}
+.snav-pill.s6{background:rgba(20,184,166,.12);border-color:rgba(20,184,166,.3);color:var(--accent2);}
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+
+.container{max-width:920px;margin:0 auto;padding:50px 32px 100px;}
+
+.hero{margin-bottom:40px;text-align:center;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-size:42px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin-bottom:14px;}
+.hero h1 span{color:var(--accent2);}
+.hero-lead{font-size:14px;color:var(--muted2);line-height:1.85;max-width:620px;margin:0 auto;}
+
+.spine{background:linear-gradient(135deg,rgba(20,184,166,.07),rgba(59,130,246,.04));border:1px solid rgba(20,184,166,.22);border-radius:14px;padding:22px 26px;margin-bottom:36px;}
+.spine-text{font-size:18px;font-weight:700;color:var(--text);line-height:1.55;font-family:'Gowun Batang',serif;text-align:center;}
+.spine-text span{color:var(--accent2);}
+
+.section{margin-bottom:50px;scroll-margin-top:130px;}
+.sec-title{font-size:22px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.sec-bar{width:3px;height:24px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+.sec-sub{font-size:13px;color:var(--muted2);margin-bottom:22px;padding-left:13px;line-height:1.7;}
+p.body{font-size:13.5px;color:var(--muted2);line-height:1.95;margin-bottom:14px;}
+p.body strong{color:var(--text);}
+p.body em{color:var(--accent2);font-style:normal;font-weight:600;}
+
+.callout{border-radius:11px;padding:16px 20px;margin:18px 0;}
+.callout.teal{background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.22);}
+.callout.red{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);}
+.callout.green{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);}
+.callout.yellow{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);}
+.callout.blue{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);}
+.cl-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.callout.teal .cl-label{color:var(--accent2);}
+.callout.red .cl-label{color:var(--red);}
+.callout.green .cl-label{color:var(--green);}
+.callout.yellow .cl-label{color:var(--yellow);}
+.callout.blue .cl-label{color:var(--blue2);}
+.cl-body{font-size:13px;color:var(--muted2);line-height:1.85;}
+.cl-body strong{color:var(--text);}
+.cl-body em{color:var(--accent2);font-style:normal;}
+.cl-body code{background:var(--s2);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--orange);}
+
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--s2);}
+thead th{padding:10px 14px;text-align:left;font-weight:700;color:var(--muted2);font-size:11px;letter-spacing:.5px;white-space:nowrap;}
+tbody tr{border-top:1px solid var(--border);}
+tbody tr:hover{background:var(--s2);}
+tbody td{padding:10px 14px;color:var(--muted2);line-height:1.65;vertical-align:top;}
+tbody td strong{color:var(--text);}
+tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+/* ── PYRAMID ── */
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:6px;margin:24px 0;}
+.pyr-row{display:flex;align-items:center;gap:14px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+.pyr-row.unit{width:90%;border-color:rgba(20,184,166,.3);background:rgba(20,184,166,.05);}
+.pyr-row.intg{width:65%;border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.05);}
+.pyr-row.e2e{width:40%;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.05);}
+.pyr-icon{font-size:24px;}
+.pyr-content{flex:1;}
+.pyr-name{font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.pyr-meta{font-size:11px;color:var(--muted2);}
+.pyr-meta strong{color:var(--text);}
+
+/* ── CODE BOX ── */
+.codebox{background:#05080d;border:1px solid var(--border2);border-radius:11px;overflow:hidden;margin:14px 0;}
+.codebox-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0b1018;border-bottom:1px solid var(--border);}
+.codebox-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent2);font-weight:700;}
+.codebox-tag{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.codebox-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.85;white-space:pre;overflow-x:auto;}
+.codebox-body .h{color:var(--accent2);font-weight:700;}
+.codebox-body .cmt{color:var(--muted);}
+.codebox-body .key{color:var(--orange);}
+.codebox-body .str{color:var(--green);}
+.codebox-body .kw{color:var(--purple);}
+.codebox-body .num{color:var(--yellow);}
+.codebox-body .typ{color:var(--blue2);}
+
+/* ── FLOW ── */
+.flow{display:flex;align-items:stretch;gap:6px;margin:16px 0;flex-wrap:wrap;}
+.fl-step{flex:1;min-width:120px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;border-color:rgba(20,184,166,.3);}
+.fl-step.bad{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.04);}
+.fl-step.good{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04);}
+.fl-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent2);font-weight:700;margin-bottom:4px;}
+.fl-icon{font-size:22px;margin-bottom:4px;}
+.fl-name{font-size:11.5px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.fl-desc{font-size:10.5px;color:var(--muted2);line-height:1.55;}
+.fl-arr{display:flex;align-items:center;color:var(--muted);font-size:13px;}
+
+/* ── PROMPT BOX ── */
+.prompt-box{background:var(--s2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:14px 0;}
+.pb-header{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--s3);border-bottom:1px solid var(--border);}
+.pb-label{font-size:10px;font-weight:700;color:var(--orange);letter-spacing:1px;text-transform:uppercase;}
+.pb-copy{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:11px;font-family:'Noto Sans KR',sans-serif;transition:color .2s;}
+.pb-copy:hover{color:var(--accent2);}
+.pb-body{padding:14px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted2);line-height:1.8;white-space:pre-wrap;}
+
+.check-list{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin:14px 0;}
+.check-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted2);line-height:1.85;padding:5px 0;}
+.check-row::before{content:'☐';color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0;}
+.check-row strong{color:var(--text);}
+.check-row code{background:var(--s1);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+.btn-nav{background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:10px;padding:13px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s;text-decoration:none;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent2);}
+.divider{border:none;border-top:1px solid var(--border);margin:42px 0;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+@media(max-width:768px){
+  .container{padding:30px 16px 80px;}
+  .hero h1{font-size:28px;}
+  .pyr-row.unit,.pyr-row.intg,.pyr-row.e2e{width:100%;}
+  .stage-nav{justify-content:flex-start;padding:9px 16px;}
+  .nav-bottom{flex-direction:column;gap:14px;align-items:stretch;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="bonus-badge">부록 · 테스트</span>
+  </div>
+  <a class="back-link" href="../index.html">← 커리큘럼 홈</a>
+</div>
+
+<nav class="stage-nav">
+  <a href="../index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="../stage1.html" class="snav-pill s1">1</a>
+  <a href="../stage2.html" class="snav-pill s2">2</a>
+  <a href="../stage3.html" class="snav-pill s3">3</a>
+  <a href="../stage4.html" class="snav-pill s4">4</a>
+  <a href="../stage5.html" class="snav-pill s5">5</a>
+  <a href="../stage6.html" class="snav-pill s6">6</a>
+  <a href="../stage7.html" class="snav-pill s7">7</a>
+  <a href="../stage8.html" class="snav-pill s8">8</a>
+  <a href="../stage9.html" class="snav-pill s9">9</a>
+</nav>
+
+<div class="container">
+
+<section class="hero">
+  <div class="hero-eyebrow">★ Stage 6 후속 · BONUS</div>
+  <h1>비개발자가<br><span>테스트를 짠다</span></h1>
+  <p class="hero-lead">"테스트는 개발자만 짠다"는 옛 통념. AI에게 시키면 비개발자도 30분에 테스트 셋업. 이 한 페이지로 Vitest + Playwright + AI 활용까지 끝냅니다.</p>
+</section>
+
+<div class="spine">
+  <div class="spine-text">"테스트 없는 코드 = <span>운에 맡긴 코드</span>"</div>
+</div>
+
+<hr class="divider">
+
+<!-- §1: 왜 테스트인가 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§1. 왜 테스트인가 (비개발자도 알아야 하는 이유)</h2>
+  <p class="sec-sub">"AI가 짠 코드를 어떻게 믿나" — 테스트가 그 답입니다</p>
+
+  <p class="body">Stage 5에서 Claude Code가 짠 코드, 진짜 작동하는지 어떻게 압니까? 한 번 손으로 클릭해서 확인? <em>그건 첫 1주만 가능</em>합니다. 기능이 10개 넘으면 매번 손으로 검증 불가능 → <strong>테스트 코드가 그 검증을 자동화</strong>합니다.</p>
+
+  <div class="callout teal">
+    <div class="cl-label">🎯 테스트의 진짜 가치 — 3가지</div>
+    <div class="cl-body">
+      <strong>1. AI가 짠 코드 검증 자동화</strong> — 사람이 매번 클릭 안 함<br>
+      <strong>2. 리팩토링 안전망</strong> — 다음에 코드 바꿔도 기존 기능 망가지면 즉시 알림<br>
+      <strong>3. AI에게 "정답 명세"</strong> — 테스트가 있으면 AI가 더 정확히 짬
+    </div>
+  </div>
+</section>
+
+<!-- §2: 3종 테스트 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§2. 3종 테스트 — 피라미드 모델</h2>
+  <p class="sec-sub">Unit 많이 / Integration 중간 / E2E 적게</p>
+
+  <div class="pyramid">
+    <div class="pyr-row unit">
+      <div class="pyr-icon">🧪</div>
+      <div class="pyr-content">
+        <div class="pyr-name">Unit Test (단위 테스트)</div>
+        <div class="pyr-meta"><strong>도구:</strong> Vitest · <strong>속도:</strong> ms 단위 · <strong>비중:</strong> 70% · <strong>대상:</strong> 함수 1개</div>
+      </div>
+    </div>
+    <div class="pyr-row intg">
+      <div class="pyr-icon">🔗</div>
+      <div class="pyr-content">
+        <div class="pyr-name">Integration Test (통합)</div>
+        <div class="pyr-meta"><strong>도구:</strong> Vitest + Supabase test DB · <strong>속도:</strong> 초 단위 · <strong>비중:</strong> 20% · <strong>대상:</strong> API + DB</div>
+      </div>
+    </div>
+    <div class="pyr-row e2e">
+      <div class="pyr-icon">🌐</div>
+      <div class="pyr-content">
+        <div class="pyr-name">E2E Test (실제 브라우저)</div>
+        <div class="pyr-meta"><strong>도구:</strong> Playwright · <strong>속도:</strong> 분 단위 · <strong>비중:</strong> 10% · <strong>대상:</strong> 사용자 흐름</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">📐 피라미드 비율의 의미</div>
+    <div class="cl-body">
+      Unit이 빠르고 싸니까 가장 많이. E2E는 진짜 같지만 느리고 깨지기 쉬워서 핵심 흐름만. <strong>1인 SaaS 시작:</strong> Unit 20개 + E2E 3개 (가입·결제·발송)면 충분. Integration은 나중.
+    </div>
+  </div>
+</section>
+
+<!-- §3: Vitest 셋업 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§3. Vitest — 단위 테스트 셋업 (5분)</h2>
+  <p class="sec-sub">Next.js 15 + Vitest 가장 빠른 셋업</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">설치 + 첫 테스트</span>
+      <span class="codebox-tag">5 min</span>
+    </div>
+    <div class="codebox-body"><span class="cmt"># 1. 설치</span>
+<span class="key">$</span> pnpm add -D vitest @vitejs/plugin-react jsdom @testing-library/react
+
+<span class="cmt"># 2. vitest.config.ts</span>
+<span class="kw">import</span> { defineConfig } <span class="kw">from</span> <span class="str">'vitest/config'</span>;
+<span class="kw">import</span> react <span class="kw">from</span> <span class="str">'@vitejs/plugin-react'</span>;
+
+<span class="kw">export default</span> defineConfig({
+  plugins: [react()],
+  test: { environment: <span class="str">'jsdom'</span>, globals: <span class="kw">true</span> }
+});
+
+<span class="cmt"># 3. package.json scripts에 추가</span>
+<span class="str">"test"</span>: <span class="str">"vitest"</span>,
+<span class="str">"test:ci"</span>: <span class="str">"vitest run"</span>
+
+<span class="cmt"># 4. 실행</span>
+<span class="key">$</span> pnpm test       <span class="cmt"># watch 모드 (개발 중)</span>
+<span class="key">$</span> pnpm test:ci    <span class="cmt"># CI 모드 (1회 실행)</span></div>
+  </div>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">src/lib/__tests__/calc-billing.test.ts</span>
+      <span class="codebox-tag">실전 예시</span>
+    </div>
+    <div class="codebox-body"><span class="kw">import</span> { describe, it, expect } <span class="kw">from</span> <span class="str">'vitest'</span>;
+<span class="kw">import</span> { calcMonthlyBilling } <span class="kw">from</span> <span class="str">'../billing'</span>;
+
+describe(<span class="str">'calcMonthlyBilling'</span>, () => {
+  it(<span class="str">'월 구독료 계산 — 9,900원 정상'</span>, () => {
+    expect(calcMonthlyBilling(<span class="str">'monthly'</span>)).toBe(<span class="num">9900</span>);
+  });
+
+  it(<span class="str">'연 구독료 계산 — 79,000원 (2개월 무료)'</span>, () => {
+    expect(calcMonthlyBilling(<span class="str">'yearly'</span>)).toBe(<span class="num">79000</span>);
+  });
+
+  it(<span class="str">'얼리버드 50% 할인 적용'</span>, () => {
+    expect(calcMonthlyBilling(<span class="str">'monthly'</span>, { earlyBird: <span class="kw">true</span> })).toBe(<span class="num">4950</span>);
+  });
+
+  it(<span class="str">'잘못된 plan 입력 시 에러'</span>, () => {
+    expect(() => calcMonthlyBilling(<span class="str">'invalid'</span> <span class="kw">as any</span>)).toThrow();
+  });
+});</div>
+  </div>
+
+  <div class="callout teal">
+    <div class="cl-label">💡 테스트 작성 패턴 — Arrange · Act · Assert</div>
+    <div class="cl-body">
+      모든 테스트가 같은 구조: <strong>Arrange (준비)</strong> → <strong>Act (실행)</strong> → <strong>Assert (검증)</strong>. 이 한 가지만 익히면 모든 테스트가 손에 잡힙니다.
+    </div>
+  </div>
+</section>
+
+<!-- §4: Playwright E2E -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§4. Playwright — 진짜 브라우저로 테스트</h2>
+  <p class="sec-sub">실제 사용자가 클릭하는 흐름을 자동화 — 가입→결제→발송</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">설치 + 첫 E2E</span>
+      <span class="codebox-tag">10 min</span>
+    </div>
+    <div class="codebox-body"><span class="cmt"># 1. 설치 (브라우저 자동 다운로드 ~150MB)</span>
+<span class="key">$</span> pnpm add -D @playwright/test
+<span class="key">$</span> pnpm exec playwright install chromium
+
+<span class="cmt"># 2. playwright.config.ts (자동 생성)</span>
+<span class="key">$</span> pnpm exec playwright init
+
+<span class="cmt"># 3. e2e/signup-payment.spec.ts</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+test(<span class="str">'가입 → 결제 → 첫 메일 도착 흐름'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="cmt">// 1. 랜딩 방문</span>
+  <span class="kw">await</span> page.goto(<span class="str">'/'</span>);
+  <span class="kw">await</span> expect(page).toHaveTitle(/뉴스레터/);
+
+  <span class="cmt">// 2. 가입 버튼 클릭 → 카카오 로그인 (테스트 계정)</span>
+  <span class="kw">await</span> page.click(<span class="str">'text=카카오로 시작'</span>);
+  <span class="cmt">// (실제 카카오는 mock — 테스트 환경에서 우회)</span>
+
+  <span class="cmt">// 3. 주제 선택 (IT)</span>
+  <span class="kw">await</span> page.click(<span class="str">'text=IT'</span>);
+  <span class="kw">await</span> page.click(<span class="str">'text=다음'</span>);
+
+  <span class="cmt">// 4. 결제 페이지 → 토스 위젯 (테스트 모드)</span>
+  <span class="kw">await</span> page.click(<span class="str">'text=월 9,900원 결제'</span>);
+  <span class="cmt">// 토스 테스트 카드 입력 (자동)</span>
+  <span class="kw">await</span> page.fill(<span class="str">'[name="cardNumber"]'</span>, <span class="str">'4242424242424242'</span>);
+  <span class="kw">await</span> page.click(<span class="str">'text=결제 완료'</span>);
+
+  <span class="cmt">// 5. 영수증 페이지 도달 검증</span>
+  <span class="kw">await</span> expect(page.locator(<span class="str">'text=결제가 완료'</span>)).toBeVisible();
+});
+
+<span class="cmt"># 4. 실행</span>
+<span class="key">$</span> pnpm exec playwright test            <span class="cmt"># headless</span>
+<span class="key">$</span> pnpm exec playwright test --headed   <span class="cmt"># 브라우저 보면서</span>
+<span class="key">$</span> pnpm exec playwright test --ui        <span class="cmt"># 인터랙티브 UI 모드</span></div>
+  </div>
+
+  <div class="callout green">
+    <div class="cl-label">🎯 Playwright의 진가 — UI 모드</div>
+    <div class="cl-body">
+      <code>--ui</code> 옵션이 게임 체인저. 실제 브라우저 클릭하듯 테스트를 보면서 디버깅 가능. <strong>비개발자에게 가장 직관적인 도구.</strong> codegen 기능으로 클릭만 하면 테스트 코드 자동 생성도.
+    </div>
+  </div>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">codegen — 클릭만으로 테스트 코드 생성</span>
+      <span class="codebox-tag">★ 마법</span>
+    </div>
+    <div class="codebox-body"><span class="cmt"># 브라우저 열림 → 사용자처럼 클릭 → 코드 자동 기록</span>
+<span class="key">$</span> pnpm exec playwright codegen http://localhost:3000
+
+<span class="cmt"># 결과: spec.ts 파일이 자동 생성됨</span>
+<span class="cmt"># 그대로 e2e/ 폴더에 저장 → 재실행 가능</span></div>
+  </div>
+</section>
+
+<!-- §5: AI에게 시키기 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§5. AI에게 테스트 짜라고 시키기</h2>
+  <p class="sec-sub">"이 함수의 테스트 짜줘" — Claude Code가 가장 잘하는 작업 중 하나</p>
+
+  <p class="body">테스트는 코드보다 패턴이 명확해서 AI가 매우 잘 짭니다. <em>구현 코드를 던지면 80%의 테스트가 자동으로 나옵니다.</em> 사람은 엣지 케이스 1~2개만 추가.</p>
+
+  <div class="prompt-box">
+    <div class="pb-header"><span class="pb-label">⚡ 단위 테스트 작성 프롬프트 (재사용)</span><button class="pb-copy" onclick="cpPrompt(this)">복사</button></div>
+    <div class="pb-body">아래 함수의 Vitest 단위 테스트를 작성해줘.
+
+[함수 코드 또는 파일 경로]:
+src/lib/billing.ts의 calcMonthlyBilling 함수
+
+테스트 요구사항:
+1. Happy path 3개 (정상 입력)
+2. Edge case 3개 (빈 입력, 0원, 음수)
+3. Error case 2개 (잘못된 type, null)
+
+각 테스트:
+- describe로 함수 그룹화
+- it로 케이스 한 줄 (한국어 OK)
+- Arrange / Act / Assert 패턴
+- expect로 정확한 값 검증
+
+추가 요구:
+- 외부 의존성(DB, API)은 모두 mock
+- 테스트 파일 위치: src/lib/__tests__/billing.test.ts
+- import 경로 절대 (@/lib/...)
+
+실행 가능한 완성 코드만 출력. 설명 X.</div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="pb-header"><span class="pb-label">⚡ E2E 테스트 작성 프롬프트 (Playwright)</span><button class="pb-copy" onclick="cpPrompt(this)">복사</button></div>
+    <div class="pb-body">사용자 흐름의 Playwright E2E 테스트를 작성해줘.
+
+흐름: 신규 사용자 가입 → 주제 선택 → 결제 → 첫 메일 발송 확인
+
+각 단계:
+1. page.goto() — 시작 URL
+2. page.click() / page.fill() — 사용자 액션
+3. expect() — 검증 (페이지 텍스트, URL, 요소 visibility)
+
+요구사항:
+- 카카오 OAuth는 mock 또는 우회 (테스트 환경)
+- 토스페이먼츠는 테스트 카드 (4242 4242 4242 4242)
+- 각 단계 사이 timeout 적절히 (waitForLoadState)
+- 실패 시 스크린샷 자동 저장
+- describe로 시나리오 그룹화
+
+파일: e2e/signup-payment.spec.ts
+실행 가능한 코드만. TypeScript.</div>
+  </div>
+</section>
+
+<!-- §6: CI 통합 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§6. CI/CD 통합 — Stop Hook + GitHub Actions</h2>
+  <p class="sec-sub">테스트는 자동으로 돌아야 의미 있음 — 매 커밋·PR마다</p>
+
+  <p class="body">Stage 3의 settings.json Stop Hook에 <code>pnpm test</code>를 추가하면 Claude가 작업 끝낼 때마다 자동 실행. GitHub Actions에 추가하면 push마다 검증.</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">.github/workflows/test.yml</span>
+      <span class="codebox-tag">YAML</span>
+    </div>
+    <div class="codebox-body"><span class="h">name:</span> Test
+<span class="h">on:</span> [push, pull_request]
+<span class="h">jobs:</span>
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span> }
+      - run: corepack enable
+      - run: pnpm install
+      - run: pnpm test:ci          <span class="cmt"># Vitest</span>
+      - run: pnpm exec playwright install chromium
+      - run: pnpm exec playwright test  <span class="cmt"># E2E</span>
+      - <span class="kw">if</span>: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/</div>
+  </div>
+
+  <div class="callout blue">
+    <div class="cl-label">🔄 Stage 3의 Stop Hook과 결합</div>
+    <div class="cl-body">
+      <code>.claude/settings.json</code>의 Stop Hook을:<br>
+      <code>"pnpm typecheck && pnpm lint && pnpm build"</code><br>
+      에서<br>
+      <code>"pnpm typecheck && pnpm lint && pnpm test:ci && pnpm build"</code><br>
+      로 변경 → Claude가 작업 끝낼 때마다 자동으로 모든 테스트 검증.
+    </div>
+  </div>
+</section>
+
+<!-- §7: 안티패턴 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§7. 비개발자가 빠지는 5가지 안티패턴</h2>
+
+  <div class="check-list">
+    <div class="check-row"><strong>모든 함수에 테스트 짜기</strong> — 단순 getter·setter는 테스트 가치 없음. <em>비즈니스 로직만</em> (계산·검증·변환)</div>
+    <div class="check-row"><strong>구현과 똑같이 짜기</strong> — 테스트가 구현을 그대로 따라하면 의미 X. "이 함수가 무엇을 하는가"의 결과만 검증</div>
+    <div class="check-row"><strong>외부 API 직접 호출</strong> — 테스트가 Anthropic·Supabase 진짜 호출 → 비용 + 느림. 반드시 mock</div>
+    <div class="check-row"><strong>테스트끼리 의존</strong> — 테스트 1이 만든 데이터를 테스트 2가 사용 → 순서 망가지면 다 실패. 각 테스트는 독립</div>
+    <div class="check-row"><strong>실패 시 무시·skip</strong> — "나중에 고치자" → 절대 안 고침. 즉시 고치거나 즉시 삭제</div>
+  </div>
+
+  <div class="callout red">
+    <div class="cl-label">🚱 가장 큰 함정 — 테스트 커버리지 100% 강박</div>
+    <div class="cl-body">
+      "100% 커버리지"는 함정. 핵심 비즈니스 로직 (결제·발송·인증) 100% + 나머지 60% = <strong>충분</strong>. UI 컴포넌트·CSS·간단한 컴포넌트는 테스트 ROI 낮음.
+    </div>
+  </div>
+</section>
+
+<!-- §8: 우선순위 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§8. 1인 SaaS 테스트 우선순위 — 무엇부터?</h2>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>우선순위</th><th>대상</th><th>도구</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>🥇 1순위</td>
+          <td>결제 금액 계산·검증</td>
+          <td>Vitest</td>
+          <td>틀리면 매출 손해 + 분쟁</td>
+        </tr>
+        <tr>
+          <td>🥇 1순위</td>
+          <td>Webhook 처리 (멱등성)</td>
+          <td>Vitest</td>
+          <td>중복 처리 시 사용자에게 알림 2번</td>
+        </tr>
+        <tr>
+          <td>🥈 2순위</td>
+          <td>가입→결제→발송 E2E 1개</td>
+          <td>Playwright</td>
+          <td>핵심 funnel 막히면 매출 0</td>
+        </tr>
+        <tr>
+          <td>🥈 2순위</td>
+          <td>이메일 발송 함수</td>
+          <td>Vitest (mock)</td>
+          <td>발송 실패 시 사용자 항의</td>
+        </tr>
+        <tr>
+          <td>🥉 3순위</td>
+          <td>RLS 정책 검증</td>
+          <td>Integration</td>
+          <td>다른 사용자 데이터 노출 방지</td>
+        </tr>
+        <tr>
+          <td>4순위</td>
+          <td>UI 컴포넌트</td>
+          <td>Vitest + RTL</td>
+          <td>변화 잦아 ROI 낮음</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout green">
+    <div class="cl-label">🎯 시작은 5개 테스트만</div>
+    <div class="cl-body">
+      <strong>Day 1:</strong> 1순위 2개 (결제 계산 + Webhook 멱등성) — Vitest로 30분<br>
+      <strong>Day 2:</strong> 2순위 E2E 1개 (가입→결제→발송) — Playwright codegen으로 1시간<br>
+      <strong>Day 3:</strong> Stop Hook + GitHub Actions에 추가 — 30분<br>
+      그 후엔 새 기능 추가할 때마다 테스트 1개씩 누적.
+    </div>
+  </div>
+</section>
+
+<div class="nav-bottom">
+  <a class="btn-nav" href="legal-tax.html">← 법무·세무</a>
+  <a class="btn-nav" href="security.html">보안 체크리스트 →</a>
+</div>
+
+</div>
+
+<script>
+function cpPrompt(btn){
+  const txt=btn.closest('.prompt-box').querySelector('.pb-body').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    btn.textContent='복사됨 ✓';
+    setTimeout(()=>btn.textContent='복사',2000);
+  });
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  let progress={};
+  try{progress=JSON.parse(localStorage.getItem('vibe-master-progress'))||{};}catch(e){}
+  const stages=progress.stages||{};
+  document.querySelectorAll('.snav-pill').forEach(pill=>{
+    const m=pill.getAttribute('href')?.match(/stage(\d)/);
+    if(!m)return;
+    if(stages[m[1]]?.completed)pill.classList.add('completed');
+  });
+});
+</script>
+</body>
+</html>
