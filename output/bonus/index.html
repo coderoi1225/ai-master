@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER 부록 — 9 Stage가 다루지 않는 영역</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--green2:#34d399;
+  --purple:#8b5cf6;--purple2:#a78bfa;
+  --pink:#ec4899;--pink2:#f472b6;
+  --orange:#f97316;--orange2:#fb923c;
+  --teal:#14b8a6;--teal2:#2dd4bf;
+  --yellow:#f59e0b;--yellow2:#fbbf24;
+  --cyan:#06b6d4;--cyan2:#22d3ee;
+  --gold:#d4a017;--gold2:#eab308;
+  --red:#ef4444;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+  --accent:#d4a017;--accent2:#eab308;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.logo{font-weight:900;font-size:18px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.logo-tag{background:linear-gradient(135deg,rgba(212,160,23,.15),rgba(234,179,8,.15));color:var(--gold2);border:1px solid rgba(212,160,23,.3);font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:1px;}
+.back-link{font-size:12px;color:var(--muted2);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--text);}
+
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}.snav-pill.s2{--c:#10b981;}.snav-pill.s3{--c:#8b5cf6;}.snav-pill.s4{--c:#ec4899;}.snav-pill.s5{--c:#f97316;}.snav-pill.s6{--c:#14b8a6;}.snav-pill.s7{--c:#f59e0b;}.snav-pill.s8{--c:#06b6d4;}.snav-pill.s9{--c:#d4a017;}
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+
+.container{max-width:1100px;margin:0 auto;padding:60px 32px 100px;}
+
+.hero{text-align:center;margin-bottom:60px;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--gold2);letter-spacing:4px;text-transform:uppercase;margin-bottom:18px;}
+.hero h1{font-size:50px;font-weight:900;letter-spacing:-2px;line-height:1.1;margin-bottom:20px;}
+.hero h1 span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero-lead{font-size:15px;color:var(--muted2);line-height:1.85;max-width:640px;margin:0 auto;}
+
+/* ── FEATURED — 보일러플레이트 ── */
+.featured{background:linear-gradient(135deg,rgba(212,160,23,.08),rgba(59,130,246,.05));border:1px solid rgba(212,160,23,.3);border-radius:16px;padding:28px 32px;margin-bottom:50px;position:relative;overflow:hidden;}
+.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--blue));}
+.feat-row{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;}
+.feat-icon-box{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;}
+.feat-content{flex:1;}
+.feat-tag{font-size:10px;font-weight:700;color:var(--gold2);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.feat-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:5px;}
+.feat-desc{font-size:13px;color:var(--muted2);line-height:1.75;}
+.feat-cta{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;padding:13px 22px;border-radius:10px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.feat-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,160,23,.3);}
+
+/* ── SPECIAL — 트러블슈팅 ── */
+.special{background:linear-gradient(135deg,rgba(239,68,68,.05),rgba(245,158,11,.04));border:1px solid rgba(239,68,68,.25);border-radius:14px;padding:22px 26px;margin-bottom:40px;display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;}
+.spec-icon-box{width:54px;height:54px;border-radius:12px;background:rgba(239,68,68,.15);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.spec-tag{font-size:10px;font-weight:700;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+.spec-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.spec-desc{font-size:12px;color:var(--muted2);line-height:1.7;}
+.spec-cta{background:rgba(239,68,68,.15);color:var(--red);padding:11px 18px;border-radius:9px;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;border:1px solid rgba(239,68,68,.3);transition:all .15s;}
+.spec-cta:hover{background:rgba(239,68,68,.25);}
+
+/* ── SECTION HEADER ── */
+.section-head{text-align:center;margin-bottom:36px;}
+.section-eyebrow{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.section-title{font-size:30px;font-weight:900;color:var(--text);letter-spacing:-0.8px;margin-bottom:12px;}
+.section-sub{font-size:13px;color:var(--muted2);line-height:1.85;max-width:520px;margin:0 auto;}
+
+/* ── BONUS GRID ── */
+.bonus-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:60px;}
+.bonus-card{background:var(--s2);border:1px solid var(--border);border-radius:13px;padding:20px 22px 18px;text-decoration:none;color:inherit;transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.bonus-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-c);}
+.bonus-card:hover{transform:translateY(-3px);border-color:var(--card-c);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.bonus-card.gold{--card-c:var(--gold);}
+.bonus-card.teal{--card-c:var(--teal);}
+.bonus-card.red{--card-c:var(--red);}
+.bonus-card.pink{--card-c:var(--pink);}
+.bonus-card.purple{--card-c:var(--purple);}
+.bonus-card.green{--card-c:var(--green);}
+.bonus-card.blue{--card-c:var(--blue);}
+.bonus-card.yellow{--card-c:var(--yellow);}
+
+.bc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.bc-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--card-c);letter-spacing:1.5px;}
+.bc-dot{width:9px;height:9px;border-radius:50%;background:var(--card-c);box-shadow:0 0 10px var(--card-c);}
+.bc-icon{font-size:28px;margin-bottom:8px;display:block;}
+.bc-title{font-size:16px;font-weight:800;color:var(--text);line-height:1.3;letter-spacing:-0.2px;margin-bottom:5px;}
+.bc-tagline{font-size:11.5px;color:var(--card-c);font-weight:700;font-family:'Gowun Batang',serif;margin-bottom:10px;line-height:1.5;}
+.bc-desc{font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:12px;flex:1;}
+.bc-meta{display:flex;justify-content:space-between;font-size:10.5px;padding-top:10px;border-top:1px dashed var(--border);}
+.bc-meta-key{color:var(--muted);}
+.bc-meta-val{color:var(--text);font-weight:700;font-family:'JetBrains Mono',monospace;}
+.bc-cta{margin-top:12px;display:flex;align-items:center;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--card-c);}
+.bc-arrow{transition:transform .2s;}
+.bonus-card:hover .bc-arrow{transform:translateX(4px);}
+
+/* ── FOOTER ── */
+.footer{text-align:center;padding:30px 0 20px;border-top:1px solid var(--border);margin-top:30px;}
+.footer-logo{font-size:14px;font-weight:900;color:var(--text);letter-spacing:-0.5px;margin-bottom:10px;}
+.footer-msg{font-size:12px;color:var(--muted);font-family:'Gowun Batang',serif;line-height:1.85;}
+
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+@media(max-width:768px){
+  .container{padding:40px 16px 80px;}
+  .hero h1{font-size:32px;}
+  .feat-row{grid-template-columns:1fr;text-align:center;}
+  .feat-icon-box{margin:0 auto;}
+  .special{grid-template-columns:1fr;text-align:center;}
+  .spec-icon-box{margin:0 auto;}
+  .bonus-grid{grid-template-columns:1fr;}
+  .stage-nav{justify-content:flex-start;padding:9px 16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="logo-tag">📚 부록 모음</span>
+  </div>
+  <a class="back-link" href="../index.html">← 커리큘럼 홈</a>
+</div>
+
+<nav class="stage-nav">
+  <a href="../index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="../stage1.html" class="snav-pill s1">1</a>
+  <a href="../stage2.html" class="snav-pill s2">2</a>
+  <a href="../stage3.html" class="snav-pill s3">3</a>
+  <a href="../stage4.html" class="snav-pill s4">4</a>
+  <a href="../stage5.html" class="snav-pill s5">5</a>
+  <a href="../stage6.html" class="snav-pill s6">6</a>
+  <a href="../stage7.html" class="snav-pill s7">7</a>
+  <a href="../stage8.html" class="snav-pill s8">8</a>
+  <a href="../stage9.html" class="snav-pill s9">9</a>
+</nav>
+
+<div class="container">
+
+<section class="hero">
+  <div class="hero-eyebrow">★ Beyond 9 Stages</div>
+  <h1>9 Stage가 다루지 않는<br><span>전문성의 영역</span></h1>
+  <p class="hero-lead">9 Stage가 0 → 50점이라면, 부록은 50 → 80점. 1인 SaaS를 진짜 운영하는 데 필요한 영역들. 보일러플레이트로 5분에 시작 + 50개 트러블슈팅 + 8개 심화 부록.</p>
+</section>
+
+<!-- ⭐ FEATURED — 보일러플레이트 -->
+<section class="featured">
+  <div class="feat-row">
+    <div class="feat-icon-box">⚡</div>
+    <div class="feat-content">
+      <div class="feat-tag">★ STARTER · GitHub TEMPLATE</div>
+      <div class="feat-title">vibe-master-newsletter-starter</div>
+      <div class="feat-desc">
+        Next.js 15 + Supabase + 토스페이 + Resend + Claude API가 <strong style="color:var(--text)">미리 연결된 보일러플레이트</strong>. fork → env 5개 채움 → <code style="color:var(--gold2);background:var(--s1);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;">pnpm dev</code> → 즉시 작동. Stage 5의 진입 시간 1/10.
+      </div>
+    </div>
+    <a class="feat-cta" href="https://github.com/coderoi1225/vibe-master-newsletter-starter" target="_blank">
+      GitHub Fork →
+    </a>
+  </div>
+</section>
+
+<!-- 🚨 트러블슈팅 -->
+<a class="special" href="../troubleshooting.html" style="text-decoration:none;color:inherit;">
+  <div class="spec-icon-box">🚨</div>
+  <div>
+    <div class="spec-tag">PRODUCTION 50선</div>
+    <div class="spec-title">트러블슈팅 카탈로그</div>
+    <div class="spec-desc">실제 마주치는 50개 에러 + 1줄 해결법. 카테고리·키워드 검색.</div>
+  </div>
+  <span class="spec-cta">에러 검색 →</span>
+</a>
+
+<!-- ━━━━━━━━━━ 8개 부록 ━━━━━━━━━━ -->
+<div class="section-head">
+  <div class="section-eyebrow">8 BONUS MODULES</div>
+  <h2 class="section-title">8개 심화 부록</h2>
+  <p class="section-sub">각 모듈은 독립 페이지. 읽는 시간 15~30분. 막힐 때 검색용으로도.</p>
+</div>
+
+<div class="bonus-grid">
+
+  <!-- 법무·세무 -->
+  <a class="bonus-card gold" href="legal-tax.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · 한국 운영</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">📜</span>
+    <div class="bc-title">법무·세무·사업자 등록</div>
+    <div class="bc-tagline">"혼자 굴리려면 합법으로"</div>
+    <div class="bc-desc">사업자 등록·통신판매업·부가세·종합소득세·약관·PIPP·세무사 선정. 한국 1인 SaaS 최대 공백.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">8 섹션 · 25분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- 테스트 -->
+  <a class="bonus-card teal" href="testing.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · Stage 6 후속</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">🧪</span>
+    <div class="bc-title">테스트 가이드 (Vitest + Playwright)</div>
+    <div class="bc-tagline">"비개발자가 테스트를 짠다"</div>
+    <div class="bc-desc">Unit/E2E 피라미드·5분 셋업·codegen·AI에게 시키기·CI 통합. 가장 약한 영역.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">8 섹션 · 30분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- 보안 -->
+  <a class="bonus-card red" href="security.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · OWASP Top 10</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">🛡️</span>
+    <div class="bc-title">보안 체크리스트</div>
+    <div class="bc-tagline">"해킹당하기 전에 막을 10가지"</div>
+    <div class="bc-desc">10대 위협 카드·Rate Limiting·Secrets·gitleaks·15항목 출시 전 체크리스트.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">5 섹션 · 25분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- 성능·비용 -->
+  <a class="bonus-card pink" href="performance.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · AI 70% 절감</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">⚡</span>
+    <div class="bc-title">성능·비용 최적화</div>
+    <div class="bc-tagline">"빠르게 그리고 저렴하게"</div>
+    <div class="bc-desc">프롬프트 캐싱·모델 라우팅·Web Vitals·DB 인덱스·3층 캐싱·비용 모니터링.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">7 섹션 · 25분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- CI/CD -->
+  <a class="bonus-card purple" href="cicd.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · GitHub Actions</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">🔄</span>
+    <div class="bc-title">CI/CD 파이프라인</div>
+    <div class="bc-tagline">"push → 검증 → 배포 자동"</div>
+    <div class="bc-desc">5단계 파이프라인·3환경 분리·ci.yml 완전 yaml·Smoke Test·자동 롤백·Secrets.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">7 섹션 · 25분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- CS·운영 -->
+  <a class="bonus-card green" href="cs-ops.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · 1인 100명 응대</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">💚</span>
+    <div class="bc-title">CS·운영 SOP</div>
+    <div class="bc-tagline">"고객 응대를 시스템으로"</div>
+    <div class="bc-desc">채널 전략·SLA·매크로 10선·환불 흐름·n8n+AI 자동화·신고 대응·규모별 시스템.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">8 섹션 · 30분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- 스케일링 -->
+  <a class="bonus-card blue" href="scaling.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · Stage 9 후속</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">📈</span>
+    <div class="bc-title">100→1,000명 스케일링</div>
+    <div class="bc-tagline">"10배씩 두 번"</div>
+    <div class="bc-desc">3 마일스톤·채널 다각화·추천 시스템·비용 폭증 대응·DB 진화·1인 한계·가격 진화.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">7 섹션 · 25분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+  <!-- 데이터 분석 -->
+  <a class="bonus-card yellow" href="data-analysis.html">
+    <div class="bc-head">
+      <span class="bc-tag">BONUS · PostHog 심화</span>
+      <div class="bc-dot"></div>
+    </div>
+    <span class="bc-icon">📊</span>
+    <div class="bc-title">데이터 분석 심화</div>
+    <div class="bc-tagline">"감으로 운영 끝, 데이터로 결정"</div>
+    <div class="bc-desc">Event Taxonomy·Funnel·Cohort·리텐션 곡선·SQL 5선·AARRR 깊이·자동 주간 리포트.</div>
+    <div class="bc-meta"><span class="bc-meta-key">분량</span><span class="bc-meta-val">8 섹션 · 30분</span></div>
+    <div class="bc-cta">읽기 <span class="bc-arrow">→</span></div>
+  </a>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-logo">VIBE<span style="background:linear-gradient(135deg,var(--blue),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;">.</span>MASTER</div>
+  <div class="footer-msg">
+    9 Stage + 부록 8개 + 트러블슈팅 50선 + 보일러플레이트<br>
+    "기술은 AI가, 영혼은 사람이"
+  </div>
+</footer>
+
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  let progress={};
+  try{progress=JSON.parse(localStorage.getItem('vibe-master-progress'))||{};}catch(e){}
+  const stages=progress.stages||{};
+  document.querySelectorAll('.snav-pill').forEach(pill=>{
+    const m=pill.getAttribute('href')?.match(/stage(\d)/);
+    if(!m)return;
+    if(stages[m[1]]?.completed)pill.classList.add('completed');
+  });
+});
+</script>
+</body>
+</html>

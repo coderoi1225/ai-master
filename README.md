@@ -23,6 +23,31 @@
 | 8 | 🔷 cyan | AI 오케스트레이션 고급 | 5~6시간 | 3개 |
 | 9 | 🏆 gold | 검증·성장·성공 앱 이식 (FINAL) | 5~6시간 | 3개 |
 
+## ★ Beyond 9 Stages — 보강 콘텐츠
+
+9 Stage 완료 후 50→80점 도약을 위한 영역.
+
+### ⚡ 보일러플레이트 (별도 레포)
+- **[vibe-master-newsletter-starter](https://github.com/coderoi1225/vibe-master-newsletter-starter)** — Next.js 15 + Supabase + 토스페이 + Resend + Claude API 모두 연결된 5분 셋업 템플릿
+
+### 🚨 트러블슈팅 카탈로그
+- **[/troubleshooting](https://ai-master-delta.vercel.app/troubleshooting)** — 50개 에러 + 1줄 해결법 (검색·필터)
+
+### 📚 8개 심화 부록 ([/bonus](https://ai-master-delta.vercel.app/bonus))
+| 부록 | 내용 | 분량 |
+|------|------|------|
+| 📜 법무·세무·사업자 | 한국 1인 SaaS 운영 실무 | 8 섹션 |
+| 🧪 테스트 가이드 | Vitest + Playwright + AI | 8 섹션 |
+| 🛡️ 보안 체크리스트 | OWASP Top 10 + 한국 SaaS | 5 섹션 |
+| ⚡ 성능·비용 최적화 | AI API 70% 절감 | 7 섹션 |
+| 🔄 CI/CD 파이프라인 | GitHub Actions + Vercel | 7 섹션 |
+| 💚 CS·운영 SOP | 1인이 100명 응대 | 8 섹션 |
+| 📈 100→1,000명 스케일링 | Stage 9 후속 | 7 섹션 |
+| 📊 데이터 분석 심화 | PostHog + SQL + 코호트 | 8 섹션 |
+
+### 🧠 진도 자동 저장
+- localStorage로 미션 체크박스 자동 유지 + stage 완료 시 nav pill에 ✓ 자동 표시
+
 ## 폴더 구조
 
 ```
