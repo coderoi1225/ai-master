@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER — AI 오케스트레이션 9 Stage 커리큘럼</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--green2:#34d399;
+  --purple:#8b5cf6;--purple2:#a78bfa;
+  --pink:#ec4899;--pink2:#f472b6;
+  --orange:#f97316;--orange2:#fb923c;
+  --teal:#14b8a6;--teal2:#2dd4bf;
+  --yellow:#f59e0b;--yellow2:#fbbf24;
+  --cyan:#06b6d4;--cyan2:#22d3ee;
+  --gold:#d4a017;--gold2:#eab308;
+  --red:#ef4444;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+  --accent:#3b82f6;--accent2:#60a5fa;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(8px);}
+.logo{font-weight:900;font-size:18px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.logo-tag{background:linear-gradient(135deg,rgba(212,160,23,.15),rgba(234,179,8,.15));color:var(--gold2);border:1px solid rgba(212,160,23,.3);font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:1px;}
+.nav-links{display:flex;gap:24px;align-items:center;}
+.nav-link{font-size:13px;color:var(--muted2);text-decoration:none;transition:color .2s;font-weight:600;}
+.nav-link:hover{color:var(--text);}
+
+/* ── CONTAINER ── */
+.container{max-width:1100px;margin:0 auto;padding:60px 32px 100px;}
+
+/* ── HERO ── */
+.hero{text-align:center;margin-bottom:80px;position:relative;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--gold2);letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;}
+.hero h1{font-size:62px;font-weight:900;letter-spacing:-2.5px;line-height:1.05;margin-bottom:24px;}
+.hero h1 span{background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink),var(--orange),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero-lead{font-size:17px;color:var(--muted2);line-height:1.85;max-width:680px;margin:0 auto 32px;}
+.hero-stats{display:flex;justify-content:center;gap:48px;margin:36px 0 0;flex-wrap:wrap;}
+.stat-item{text-align:center;}
+.stat-num{font-size:32px;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--text);line-height:1;margin-bottom:6px;}
+.stat-num.gold{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.stat-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;}
+
+/* ── SPINE 관통 메시지 ── */
+.spine{background:linear-gradient(135deg,rgba(212,160,23,.06),rgba(139,92,246,.04),rgba(6,182,212,.05));border:1px solid rgba(212,160,23,.22);border-radius:18px;padding:36px 40px;margin:40px 0 60px;position:relative;overflow:hidden;text-align:center;}
+.spine::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--green),var(--purple),var(--pink),var(--orange),var(--teal),var(--yellow),var(--cyan),var(--gold));}
+.spine-label{font-size:11px;font-weight:700;color:var(--gold2);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+.spine-text{font-size:30px;font-weight:700;color:var(--text);line-height:1.4;font-family:'Gowun Batang',serif;letter-spacing:-0.5px;}
+.spine-text span{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.spine-sub{font-size:14px;color:var(--muted2);margin-top:14px;line-height:1.85;max-width:640px;margin-left:auto;margin-right:auto;}
+
+/* ── ONE PROJECT ── */
+.one-project{background:var(--s2);border:1px solid var(--border2);border-radius:14px;padding:26px 30px;margin-bottom:80px;}
+.op-row{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;}
+.op-icon-box{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,rgba(212,160,23,.15),rgba(234,179,8,.1));border:1px solid rgba(212,160,23,.3);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0;}
+.op-content{flex:1;}
+.op-label{font-size:10px;font-weight:700;color:var(--gold2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.op-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;}
+.op-desc{font-size:13.5px;color:var(--muted2);line-height:1.85;}
+
+/* ── SECTION HEADER ── */
+.section-head{text-align:center;margin-bottom:50px;}
+.section-eyebrow{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.section-title{font-size:36px;font-weight:900;color:var(--text);letter-spacing:-1px;margin-bottom:14px;}
+.section-sub{font-size:14px;color:var(--muted2);line-height:1.85;max-width:560px;margin:0 auto;}
+
+/* ── STAGE GRID ── */
+.stages{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:0 0 80px;}
+.stage-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:22px 22px 20px;text-decoration:none;color:inherit;transition:all .25s;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.stage-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-color);}
+.stage-card:hover{transform:translateY(-3px);border-color:var(--card-color);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+
+.stage-card.s1{--card-color:var(--blue);}
+.stage-card.s2{--card-color:var(--green);}
+.stage-card.s3{--card-color:var(--purple);}
+.stage-card.s4{--card-color:var(--pink);}
+.stage-card.s5{--card-color:var(--orange);}
+.stage-card.s6{--card-color:var(--teal);}
+.stage-card.s7{--card-color:var(--yellow);}
+.stage-card.s8{--card-color:var(--cyan);}
+.stage-card.s9{--card-color:var(--gold);}
+
+.stage-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.stage-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--card-color);letter-spacing:1.5px;}
+.stage-num span{opacity:.5;}
+.stage-color-dot{width:10px;height:10px;border-radius:50%;background:var(--card-color);box-shadow:0 0 12px var(--card-color);}
+.stage-icon{font-size:32px;margin-bottom:10px;display:block;}
+.stage-title{font-size:17px;font-weight:800;color:var(--text);line-height:1.3;letter-spacing:-0.3px;margin-bottom:6px;}
+.stage-tagline{font-size:12px;color:var(--card-color);font-weight:700;font-family:'Gowun Batang',serif;margin-bottom:12px;line-height:1.5;}
+.stage-desc{font-size:12.5px;color:var(--muted2);line-height:1.75;margin-bottom:14px;flex:1;}
+
+.stage-meta{display:flex;flex-direction:column;gap:7px;padding-top:12px;border-top:1px dashed var(--border);}
+.stage-meta-row{display:flex;justify-content:space-between;font-size:11px;}
+.stage-meta-key{color:var(--muted);font-weight:600;}
+.stage-meta-val{color:var(--text);font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+.stage-outputs{margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);}
+.stage-outputs-label{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase;}
+.stage-output-item{font-size:11px;color:var(--muted2);line-height:1.6;padding-left:12px;position:relative;margin-bottom:3px;}
+.stage-output-item::before{content:'•';position:absolute;left:0;color:var(--card-color);font-weight:700;}
+
+.stage-cta{margin-top:14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700;color:var(--card-color);}
+.stage-cta-arrow{transition:transform .2s;}
+.stage-card:hover .stage-cta-arrow{transform:translateX(4px);}
+
+.stage-card.final{background:linear-gradient(135deg,var(--s2),rgba(212,160,23,.04));border-color:rgba(212,160,23,.3);}
+.stage-card.final::after{content:'★ FINAL';position:absolute;top:14px;right:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-size:9px;font-weight:900;letter-spacing:1px;padding:3px 8px;border-radius:99px;}
+
+/* ── JOURNEY ── */
+.journey{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:36px 32px;margin-bottom:80px;}
+.journey-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:24px;}
+.jf-node{background:var(--s3);border:1px solid var(--border);border-radius:9px;padding:8px 14px;font-size:11px;color:var(--muted2);font-weight:700;}
+.jf-node.b1{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:var(--blue2);}
+.jf-node.b2{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3);color:var(--green2);}
+.jf-node.b3{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:var(--purple2);}
+.jf-node.b4{background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:var(--pink2);}
+.jf-node.b5{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:var(--orange2);}
+.jf-node.b6{background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:var(--teal2);}
+.jf-node.b7{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:var(--yellow2);}
+.jf-node.b8{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.3);color:var(--cyan2);}
+.jf-node.b9{background:linear-gradient(135deg,rgba(212,160,23,.15),rgba(234,179,8,.12));border-color:rgba(212,160,23,.4);color:var(--gold2);font-weight:800;}
+.jf-arr{color:var(--muted);font-size:13px;}
+.journey-msg{font-size:13px;color:var(--muted2);line-height:1.85;margin-top:24px;text-align:center;font-family:'Gowun Batang',serif;}
+.journey-msg strong{color:var(--gold2);}
+
+/* ── PROGRESS BAR ── */
+.progress-section{margin-bottom:80px;}
+.progress-bar-wrap{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:22px 26px;}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.progress-title{font-size:13px;font-weight:700;color:var(--text);}
+.progress-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);font-weight:700;}
+.progress-bar{height:14px;background:var(--s3);border-radius:99px;overflow:hidden;display:flex;}
+.progress-seg{flex:1;border-right:1px solid var(--bg);height:100%;transition:opacity .2s;}
+.progress-seg:last-child{border-right:none;}
+.progress-seg.s1{background:var(--blue);}
+.progress-seg.s2{background:var(--green);}
+.progress-seg.s3{background:var(--purple);}
+.progress-seg.s4{background:var(--pink);}
+.progress-seg.s5{background:var(--orange);}
+.progress-seg.s6{background:var(--teal);}
+.progress-seg.s7{background:var(--yellow);}
+.progress-seg.s8{background:var(--cyan);}
+.progress-seg.s9{background:var(--gold);}
+.progress-marks{display:flex;justify-content:space-between;margin-top:8px;}
+.progress-mark{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);font-weight:700;}
+
+/* ── PRINCIPLES ── */
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:80px;}
+.principle-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 22px;}
+.principle-icon{font-size:26px;margin-bottom:10px;}
+.principle-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;}
+.principle-desc{font-size:12px;color:var(--muted2);line-height:1.75;}
+.principle-desc em{color:var(--gold2);font-style:normal;font-weight:600;}
+
+/* ── CTA ── */
+.cta{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(212,160,23,.06));border:1px solid rgba(212,160,23,.2);border-radius:18px;padding:48px 36px;text-align:center;margin-bottom:40px;position:relative;overflow:hidden;}
+.cta::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--gold));}
+.cta-eyebrow{font-size:11px;font-weight:700;color:var(--gold2);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.cta-title{font-size:30px;font-weight:900;color:var(--text);margin-bottom:14px;letter-spacing:-0.5px;}
+.cta-sub{font-size:14px;color:var(--muted2);line-height:1.85;max-width:520px;margin:0 auto 28px;}
+.cta-btn{background:linear-gradient(135deg,var(--blue),var(--blue2));border:none;color:#fff;padding:16px 36px;border-radius:11px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:all .2s;letter-spacing:.5px;box-shadow:0 6px 20px rgba(59,130,246,.3);}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.4);}
+
+/* ── FOOTER ── */
+.footer{text-align:center;padding:40px 0 20px;border-top:1px solid var(--border);margin-top:40px;}
+.footer-logo{font-size:14px;font-weight:900;color:var(--text);letter-spacing:-0.5px;margin-bottom:10px;}
+.footer-logo span{background:linear-gradient(135deg,var(--blue),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.footer-msg{font-size:12px;color:var(--muted);font-family:'Gowun Batang',serif;line-height:1.85;}
+
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border2);}
+
+@media(max-width:900px){
+  .stages{grid-template-columns:repeat(2,1fr);}
+  .principles{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .container{padding:36px 20px 60px;}
+  .hero h1{font-size:38px;}
+  .hero-lead{font-size:14px;}
+  .spine-text{font-size:22px;}
+  .section-title{font-size:26px;}
+  .stages{grid-template-columns:1fr;}
+  .hero-stats{gap:24px;}
+  .stat-num{font-size:24px;}
+  .op-row{grid-template-columns:1fr;text-align:center;}
+  .op-icon-box{margin:0 auto;}
+  .nav-links{display:none;}
+  .cta{padding:32px 22px;}
+  .cta-title{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="logo-tag">9 STAGE 커리큘럼</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#stages">9 Stage</a>
+    <a class="nav-link" href="#journey">학습 여정</a>
+    <a class="nav-link" href="#principles">디자인 원칙</a>
+    <a class="nav-link" href="#cta">시작하기</a>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-eyebrow">★ AI 오케스트레이션 마스터 코스</div>
+  <h1>비개발자에서<br><span>AI 오케스트레이터</span>로</h1>
+  <p class="hero-lead">9개 Stage를 차근차근 따라가며 1인 창업가가 자기 손으로 AI 자동화 SaaS를 만들고, 배포하고, 첫 유료 구독자까지 받습니다. 코드를 모르는 사람도, AI 팀을 운영하는 사람으로.</p>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">9</div>
+      <div class="stat-label">Stages</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">~50<span style="font-size:14px;color:var(--muted);">시간</span></div>
+      <div class="stat-label">학습 시간</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">25<span style="font-size:14px;color:var(--muted);">개</span></div>
+      <div class="stat-label">실전 산출물</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num gold">1</div>
+      <div class="stat-label">완성된 서비스</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SPINE ─── -->
+<div class="spine">
+  <div class="spine-label">✦ 이 커리큘럼을 관통하는 한 문장</div>
+  <div class="spine-text">"기술은 <span>AI</span>가, 영혼은 <span>사람</span>이"</div>
+  <div class="spine-sub">Claude Code가 코드를 짜고, n8n이 자동화를 굴리고, Dify가 RAG를 돌립니다. 하지만 <strong style="color:var(--text)">무엇을 만들지, 누구를 위해, 어떤 가치를 줄지는 오직 당신이 결정합니다.</strong> 9 Stage가 이 한 문장을 증명합니다.</div>
+</div>
+
+<!-- ─── ONE PROJECT ─── -->
+<div class="one-project">
+  <div class="op-row">
+    <div class="op-icon-box">📰</div>
+    <div class="op-content">
+      <div class="op-label">🎯 ONE PROJECT · ALL 9 STAGES</div>
+      <div class="op-title">예시 프로젝트: AI 뉴스레터 자동화 서비스</div>
+      <div class="op-desc">매일 아침 AI가 IT/AI/투자 뉴스를 수집·요약 → 구독자에게 카카오/이메일 자동 발송. 월 9,900원 구독 모델. <strong style="color:var(--text)">Stage 1에서 기획해서 Stage 9에서 첫 유료 구독자를 받기까지</strong>, 같은 서비스가 한 단계씩 살아나는 모습을 9 Stage 모두에서 봅니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PROGRESS ─── -->
+<section class="progress-section">
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <div class="progress-title">📊 9 Stage 진도 — 9개 색상의 무지개로</div>
+      <div class="progress-pct">00 / 09 완주</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-seg s1" title="Stage 1"></div>
+      <div class="progress-seg s2" title="Stage 2"></div>
+      <div class="progress-seg s3" title="Stage 3"></div>
+      <div class="progress-seg s4" title="Stage 4"></div>
+      <div class="progress-seg s5" title="Stage 5"></div>
+      <div class="progress-seg s6" title="Stage 6"></div>
+      <div class="progress-seg s7" title="Stage 7"></div>
+      <div class="progress-seg s8" title="Stage 8"></div>
+      <div class="progress-seg s9" title="Stage 9"></div>
+    </div>
+    <div class="progress-marks">
+      <div class="progress-mark">START</div>
+      <div class="progress-mark">PMF · LAUNCH</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 9 STAGES ─── -->
+<section id="stages">
+  <div class="section-head">
+    <div class="section-eyebrow">9 STAGES</div>
+    <h2 class="section-title">전체 커리큘럼 한눈에</h2>
+    <p class="section-sub">기획에서 첫 유료 결제까지. 각 Stage는 독립 실행 가능한 HTML 한 파일이며 다음 Stage의 재료를 만듭니다.</p>
+  </div>
+
+  <div class="stages">
+
+    <!-- Stage 1 -->
+    <a class="stage-card s1" href="stage1.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>01 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🧭</span>
+      <div class="stage-title">비즈니스 기획 & AI 멘탈모델</div>
+      <div class="stage-tagline">"만들기 전에 생각하는 법을 먼저"</div>
+      <div class="stage-desc">하네스 엔지니어링·기억의 4계층·5 Forces·TAM/SAM/SOM·페르소나·JTBD·Lean Canvas·NSM. 코드 한 줄 없이 가장 중요한 것을 정합니다.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">3~4시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★ 입문</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 2개</div>
+        <div class="stage-output-item">docs/lean-canvas.md</div>
+        <div class="stage-output-item">docs/personas.md</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 2 -->
+    <a class="stage-card s2" href="stage2.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>02 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🛠️</span>
+      <div class="stage-title">개발환경 & 문서화 인프라</div>
+      <div class="stage-tagline">"만들기 전에 설계도를 먼저"</div>
+      <div class="stage-desc">터미널 10분 속성·Antigravity vs Claude Code·5종 문서 템플릿·PRD 작성법·GitHub 워크플로우·코드 독해력 30분. AI가 따라할 헌법을 만듭니다.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">4~5시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★ 입문</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">docs/PRD.md</div>
+        <div class="stage-output-item">CLAUDE.md (초안)</div>
+        <div class="stage-output-item">docs/ARCHITECTURE.md</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 3 -->
+    <a class="stage-card s3" href="stage3.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>03 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🧬</span>
+      <div class="stage-title">프롬프트 → 컨텍스트 엔지니어링</div>
+      <div class="stage-tagline">"AI에게 무엇을 줄지 설계하는 법"</div>
+      <div class="stage-desc">Karpathy 4원칙·CLAUDE.md 100줄 황금률·SKILL.md·settings.json Hooks·컨텍스트 로트 70% 룰·장PM 5단계 메타 방법론.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">3~4시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★ 중급</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">CLAUDE.md (완성형)</div>
+        <div class="stage-output-item">.claude/skills/ × 3</div>
+        <div class="stage-output-item">.claude/settings.json</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 4 -->
+    <a class="stage-card s4" href="stage4.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>04 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🎨</span>
+      <div class="stage-title">AI 디자인 마스터</div>
+      <div class="stage-tagline">"보이는 것이 팔린다"</div>
+      <div class="stage-desc">Figma·Canva·Flux 2·Midjourney·Suno·ElevenLabs·Veo 3.1·CapCut. 이미지 6요소·60초 쇼츠 5단계·1편 → 4채널 재활용.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">6~8시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★ 중급</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">이미지 10장 패키지</div>
+        <div class="stage-output-item">60초 쇼츠 영상 1개</div>
+        <div class="stage-output-item">랜딩페이지 시안</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 5 -->
+    <a class="stage-card s5" href="stage5.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>05 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">⚙️</span>
+      <div class="stage-title">Claude Code 완전 정복</div>
+      <div class="stage-tagline">"AI 에이전트 개발 운영체계"</div>
+      <div class="stage-desc">설치·권한 모드 6가지·슬래시 명령·단축키·토큰 70% 룰·Explore→Plan→Code→Verify·Skills·Hooks·Harness 프레임워크. 7일 실습 로드맵.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">8~10시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★★ 핵심</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">첫 기능 구현 + GitHub 커밋</div>
+        <div class="stage-output-item">장PM 메타 스킬 4종</div>
+        <div class="stage-output-item">phases/ Harness 첫 Phase</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 6 -->
+    <a class="stage-card s6" href="stage6.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>06 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🏗️</span>
+      <div class="stage-title">백엔드 인프라 완전 이해</div>
+      <div class="stage-tagline">"단단한 백엔드가 서비스를 살린다"</div>
+      <div class="stage-desc">데이터 흐름·HTTP·JSON·환경변수·Supabase 4역할·카카오 OAuth·토스페이먼츠·텔레그램 봇·Vercel 배포·Happy Path 검증.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">6~8시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★★ 중상</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">라이브 URL (가입+결제)</div>
+        <div class="stage-output-item">텔레그램 봇 알림</div>
+        <div class="stage-output-item">PostHog 대시보드</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 7 -->
+    <a class="stage-card s7" href="stage7.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>07 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">⚡</span>
+      <div class="stage-title">자동화 마스터</div>
+      <div class="stage-tagline">"자는 동안에도 일하는 시스템"</div>
+      <div class="stage-desc">Zapier vs Make vs n8n·Docker·n8n MCP·5가지 워크플로우·카카오 PlayMCP·Make.com 입문·1인 창업가 자동화 TOP 10·ROI 계산기.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">5~6시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★★ 중상</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">뉴스 발송 워크플로우</div>
+        <div class="stage-output-item">구독자 알림 자동화</div>
+        <div class="stage-output-item">주간 리포트 → 텔레그램</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 8 -->
+    <a class="stage-card s8" href="stage8.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>08 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🌐</span>
+      <div class="stage-title">AI 오케스트레이션 고급</div>
+      <div class="stage-tagline">"AI를 팀으로 운영하는 법"</div>
+      <div class="stage-desc">MCP 5개 연결·멀티에이전트(오케스트레이터+4 서브)·HITL·RAG·Dify·에이전트 거버넌스·메타 프롬프팅·장PM 5단계 사이클.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">5~6시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★★★ 고급</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">Dify RAG 연결</div>
+        <div class="stage-output-item">AGENT.md + GOVERNANCE.md</div>
+        <div class="stage-output-item">MCP 3개 이상 동작</div>
+      </div>
+      <div class="stage-cta">시작하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+    <!-- Stage 9 -->
+    <a class="stage-card s9 final" href="stage9.html">
+      <div class="stage-head">
+        <span class="stage-num">STAGE <span>09 / 09</span></span>
+        <div class="stage-color-dot"></div>
+      </div>
+      <span class="stage-icon">🏆</span>
+      <div class="stage-title">검증·성장·성공 앱 이식</div>
+      <div class="stage-tagline">"만든 것을 파는 사람이 됩니다"</div>
+      <div class="stage-desc">AARRR 깔때기·Sean Ellis Test PMF·KPT 회고·6개월 OKR 로드맵·성공 앱 리버스엔지니어링·SPEC_TRANSPLANT·첫 판매 전략·Won't Do.</div>
+      <div class="stage-meta">
+        <div class="stage-meta-row"><span class="stage-meta-key">학습 시간</span><span class="stage-meta-val">5~6시간</span></div>
+        <div class="stage-meta-row"><span class="stage-meta-key">난이도</span><span class="stage-meta-val">★★★★ 완주</span></div>
+      </div>
+      <div class="stage-outputs">
+        <div class="stage-outputs-label">📦 산출물 3개</div>
+        <div class="stage-output-item">SPEC_TRANSPLANT.md</div>
+        <div class="stage-output-item">Roadmap-2026H2.md</div>
+        <div class="stage-output-item">★ 첫 유료 구독자 1명</div>
+      </div>
+      <div class="stage-cta">완주하기 <span class="stage-cta-arrow">→</span></div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ─── JOURNEY ─── -->
+<section id="journey">
+  <div class="section-head">
+    <div class="section-eyebrow">JOURNEY</div>
+    <h2 class="section-title">학습 여정 — 한 Stage가 다음을 만듭니다</h2>
+    <p class="section-sub">9 Stage는 단절된 강의가 아닙니다. 이전 Stage 산출물이 다음 Stage의 재료가 되는 연쇄 구조입니다.</p>
+  </div>
+
+  <div class="journey">
+    <div class="journey-flow">
+      <div class="jf-node b1">1. 기획</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b2">2. 문서</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b3">3. 컨텍스트</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b4">4. 디자인</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b5">5. Claude Code</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b6">6. 배포</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b7">7. 자동화</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b8">8. 멀티에이전트</div>
+      <div class="jf-arr">→</div>
+      <div class="jf-node b9">9. 판매</div>
+    </div>
+    <div class="journey-msg">
+      <strong>Lean Canvas</strong>가 <strong>PRD</strong>가 되고, <strong>CLAUDE.md</strong>가 되고, <strong>실제 코드</strong>가 되고, <strong>라이브 URL</strong>이 되고, <strong>자동화</strong>가 되고,<br>
+      <strong>멀티에이전트</strong>가 되고, 마침내 <strong>첫 유료 구독자의 결제</strong>가 됩니다.
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRINCIPLES ─── -->
+<section id="principles">
+  <div class="section-head">
+    <div class="section-eyebrow">DESIGN PRINCIPLES</div>
+    <h2 class="section-title">커리큘럼 디자인 원칙</h2>
+    <p class="section-sub">9 Stage 모두 같은 원칙으로 설계되었습니다. 한 Stage를 익히면 다음 Stage가 자연스럽게 손에 익습니다.</p>
+  </div>
+
+  <div class="principles">
+    <div class="principle-card">
+      <div class="principle-icon">🎯</div>
+      <div class="principle-title">One Project 원칙</div>
+      <div class="principle-desc">9 Stage 전체를 <em>AI 뉴스레터 자동화 서비스</em> 하나로 관통합니다. 추상적 예시 없이 한 서비스의 진화 과정으로 학습합니다.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">📦</div>
+      <div class="principle-title">Stage 연결 고리</div>
+      <div class="principle-desc">각 Stage는 명시적으로 <em>"이전에서 받아온 것"</em>과 <em>"다음에 넘겨줄 것"</em>을 정의합니다. 학습이 흩어지지 않습니다.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">✅</div>
+      <div class="principle-title">산출물 미션</div>
+      <div class="principle-desc">읽기만 해서는 안 됩니다. <em>각 Stage 말미에 2~3개의 실제 산출물</em>을 만들어야 다음으로 넘어갑니다. 총 25개.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🤖</div>
+      <div class="principle-title">AI 튜터 내장</div>
+      <div class="principle-desc">각 Stage HTML에 <em>Claude API 직결 AI 튜터</em>가 들어 있습니다. 5개 추천 질문 + 자유 입력. Stage 컨텍스트로 맞춤 답변.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🎨</div>
+      <div class="principle-title">색상 = 진도</div>
+      <div class="principle-desc">9 Stage는 9가지 색상(파랑→그린→보라→핑크→오렌지→틸→옐로우→시안→골드). 진도 dot으로 항상 위치를 시각화합니다.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">📜</div>
+      <div class="principle-title">독립 실행 단일 파일</div>
+      <div class="principle-desc">각 Stage는 <em>완전 독립 단일 HTML 파일</em>. 빌드 도구 X, 의존성 X. 브라우저에서 열면 바로 학습 시작.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section id="cta" class="cta">
+  <div class="cta-eyebrow">★ 지금 시작하기</div>
+  <h2 class="cta-title">Stage 1부터, 차근차근</h2>
+  <p class="cta-sub">코드를 한 줄도 안 쓰는 비즈니스 기획부터 시작합니다. 첫 Stage는 3~4시간, 가장 가볍습니다. 일단 열어보세요.</p>
+  <a class="cta-btn" href="stage1.html">
+    Stage 1 시작하기 — 비즈니스 기획 →
+  </a>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="footer-logo">VIBE<span>.</span>MASTER</div>
+  <div class="footer-msg">
+    "기술은 AI가, 영혼은 사람이"<br>
+    9 Stage · One Project · One Voice
+  </div>
+</footer>
+
+</div>
+
+</body>
+</html>
