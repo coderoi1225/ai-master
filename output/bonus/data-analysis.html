@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER 부록 — 데이터 분석 심화 (PostHog + SQL + 코호트)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --accent:#f59e0b;--accent2:#fbbf24;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--orange:#f97316;--teal:#14b8a6;--pink:#ec4899;
+  --cyan:#06b6d4;--gold:#d4a017;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-weight:900;font-size:17px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{color:var(--accent);}
+.bonus-badge{background:rgba(245,158,11,.12);color:var(--accent2);border:1px solid rgba(245,158,11,.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px;}
+.bonus-badge::before{content:'📊 ';}
+.back-link{font-size:12px;color:var(--muted2);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--text);}
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}.snav-pill.s2{--c:#10b981;}.snav-pill.s3{--c:#8b5cf6;}.snav-pill.s4{--c:#ec4899;}.snav-pill.s5{--c:#f97316;}.snav-pill.s6{--c:#14b8a6;}.snav-pill.s7{--c:#f59e0b;}.snav-pill.s8{--c:#06b6d4;}.snav-pill.s9{--c:#d4a017;}
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+.container{max-width:920px;margin:0 auto;padding:50px 32px 100px;}
+.hero{margin-bottom:30px;text-align:center;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-size:42px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin-bottom:14px;}
+.hero h1 span{color:var(--accent2);}
+.hero-lead{font-size:14px;color:var(--muted2);line-height:1.85;max-width:620px;margin:0 auto;}
+.spine{background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(212,160,23,.04));border:1px solid rgba(245,158,11,.22);border-radius:14px;padding:22px 26px;margin-bottom:36px;}
+.spine-text{font-size:18px;font-weight:700;color:var(--text);line-height:1.55;font-family:'Gowun Batang',serif;text-align:center;}
+.spine-text span{color:var(--accent2);}
+.section{margin-bottom:50px;scroll-margin-top:130px;}
+.sec-title{font-size:22px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.sec-bar{width:3px;height:24px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+.sec-sub{font-size:13px;color:var(--muted2);margin-bottom:22px;padding-left:13px;line-height:1.7;}
+p.body{font-size:13.5px;color:var(--muted2);line-height:1.95;margin-bottom:14px;}
+p.body strong{color:var(--text);}
+p.body em{color:var(--accent2);font-style:normal;font-weight:600;}
+.callout{border-radius:11px;padding:16px 20px;margin:18px 0;}
+.callout.yellow{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);}
+.callout.green{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);}
+.callout.blue{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);}
+.callout.red{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);}
+.callout.purple{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);}
+.cl-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.callout.yellow .cl-label{color:var(--accent2);}
+.callout.green .cl-label{color:var(--green);}
+.callout.blue .cl-label{color:var(--blue2);}
+.callout.red .cl-label{color:var(--red);}
+.callout.purple .cl-label{color:var(--purple);}
+.cl-body{font-size:13px;color:var(--muted2);line-height:1.85;}
+.cl-body strong{color:var(--text);}
+.cl-body em{color:var(--accent2);font-style:normal;}
+.cl-body code{background:var(--s2);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--orange);}
+.tbl-wrap{overflow-x:auto;margin:14px 0;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--s2);}
+thead th{padding:10px 14px;text-align:left;font-weight:700;color:var(--muted2);font-size:11px;letter-spacing:.5px;white-space:nowrap;}
+tbody tr{border-top:1px solid var(--border);}
+tbody tr:hover{background:var(--s2);}
+tbody td{padding:10px 14px;color:var(--muted2);line-height:1.65;vertical-align:top;}
+tbody td strong{color:var(--text);}
+tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+/* ── EVENT TAXONOMY ── */
+.evt-list{margin:14px 0;}
+.evt-card{display:grid;grid-template-columns:36px 1fr;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;margin-bottom:7px;align-items:center;border-left:3px solid var(--accent);}
+.evt-icon{width:32px;height:32px;border-radius:7px;background:rgba(245,158,11,.15);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.evt-name{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.evt-when{font-size:11px;color:var(--muted2);line-height:1.6;}
+
+/* ── COHORT TABLE ── */
+.cohort-table{margin:14px 0;overflow-x:auto;}
+.cohort-table table{font-size:11px;}
+.cohort-table th, .cohort-table td{padding:7px 9px;text-align:center;}
+.cohort-table .pct-100{background:rgba(16,185,129,.4);color:#fff;}
+.cohort-table .pct-90{background:rgba(16,185,129,.3);color:var(--text);}
+.cohort-table .pct-70{background:rgba(245,158,11,.3);color:var(--text);}
+.cohort-table .pct-50{background:rgba(249,115,22,.3);color:var(--text);}
+.cohort-table .pct-30{background:rgba(239,68,68,.3);color:var(--text);}
+.cohort-table .pct-10{background:rgba(239,68,68,.5);color:#fff;}
+
+/* ── FUNNEL ── */
+.funnel-vis{margin:18px 0;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.fn-row{display:grid;grid-template-columns:140px 1fr 100px;gap:14px;align-items:center;margin-bottom:8px;}
+.fn-name{font-size:12px;color:var(--text);font-weight:700;}
+.fn-bar{position:relative;height:28px;background:var(--s3);border-radius:7px;overflow:hidden;}
+.fn-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:7px;display:flex;align-items:center;padding-left:12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff;}
+.fn-num{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--accent2);text-align:right;}
+.fn-conv{display:flex;justify-content:flex-end;font-size:10px;color:var(--red);font-family:'JetBrains Mono',monospace;font-weight:700;margin:2px 0 8px;padding-right:114px;}
+
+.codebox{background:#05080d;border:1px solid var(--border2);border-radius:11px;overflow:hidden;margin:14px 0;}
+.codebox-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#0b1018;border-bottom:1px solid var(--border);}
+.codebox-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent2);font-weight:700;}
+.codebox-tag{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.codebox-body{padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.85;white-space:pre;overflow-x:auto;}
+.codebox-body .h{color:var(--accent2);font-weight:700;}
+.codebox-body .cmt{color:var(--muted);}
+.codebox-body .key{color:var(--orange);}
+.codebox-body .str{color:var(--green);}
+.codebox-body .kw{color:var(--purple);}
+.codebox-body .num{color:var(--yellow);}
+
+.check-list{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin:14px 0;}
+.check-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted2);line-height:1.85;padding:5px 0;}
+.check-row::before{content:'☐';color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0;}
+.check-row strong{color:var(--text);}
+.check-row code{background:var(--s1);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange);}
+
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);}
+.btn-nav{background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:10px;padding:13px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:inline-flex;align-items:center;gap:8px;transition:all .2s;text-decoration:none;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent2);}
+.divider{border:none;border-top:1px solid var(--border);margin:42px 0;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+@media(max-width:768px){
+  .container{padding:30px 16px 80px;}
+  .hero h1{font-size:28px;}
+  .fn-row{grid-template-columns:1fr;}
+  .stage-nav{justify-content:flex-start;padding:9px 16px;}
+  .nav-bottom{flex-direction:column;gap:14px;align-items:stretch;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="bonus-badge">부록 · 데이터 분석</span>
+  </div>
+  <a class="back-link" href="../index.html">← 커리큘럼 홈</a>
+</div>
+
+<nav class="stage-nav">
+  <a href="../index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="../stage1.html" class="snav-pill s1">1</a>
+  <a href="../stage2.html" class="snav-pill s2">2</a>
+  <a href="../stage3.html" class="snav-pill s3">3</a>
+  <a href="../stage4.html" class="snav-pill s4">4</a>
+  <a href="../stage5.html" class="snav-pill s5">5</a>
+  <a href="../stage6.html" class="snav-pill s6">6</a>
+  <a href="../stage7.html" class="snav-pill s7">7</a>
+  <a href="../stage8.html" class="snav-pill s8">8</a>
+  <a href="../stage9.html" class="snav-pill s9">9</a>
+</nav>
+
+<div class="container">
+
+<section class="hero">
+  <div class="hero-eyebrow">★ PostHog + SQL + 코호트 + funnel · BONUS</div>
+  <h1>감으로 운영 끝<br><span>데이터로 결정</span></h1>
+  <p class="hero-lead">Stage 6에 PostHog 심고, Stage 7에서 자동 리포트 받고, Stage 9에서 AARRR 봤다면 이제 깊이. 진짜 의사결정에 쓰이는 4가지 분석 패턴.</p>
+</section>
+
+<div class="spine">
+  <div class="spine-text">"<span>측정 못 하면 개선도 못 한다</span>"</div>
+</div>
+
+<hr class="divider">
+
+<!-- §1: Event Taxonomy -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§1. Event Taxonomy — 무엇을 측정할까</h2>
+  <p class="sec-sub">"PostHog 켜기"가 끝이 아님. 어떤 이벤트를 어떻게 이름 붙일지가 80%</p>
+
+  <p class="body">이벤트 이름 일관성이 모든 분석의 기반. <em>일주일만 다르게 짓다 보면 데이터가 무용</em>. 시작 전 명세 1장 작성.</p>
+
+  <div class="evt-list">
+    <div class="evt-card">
+      <div class="evt-icon">👀</div>
+      <div>
+        <div class="evt-name">page_viewed</div>
+        <div class="evt-when">PostHog 자동 — 모든 페이지 방문</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">📝</div>
+      <div>
+        <div class="evt-name">signup_started</div>
+        <div class="evt-when">"카카오로 시작" 버튼 클릭</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">✅</div>
+      <div>
+        <div class="evt-name">signup_completed</div>
+        <div class="evt-when">users 테이블에 row 생성 직후</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">🎯</div>
+      <div>
+        <div class="evt-name">topic_selected</div>
+        <div class="evt-when">주제 선택 (props: { topic: 'IT' })</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">💳</div>
+      <div>
+        <div class="evt-name">checkout_started</div>
+        <div class="evt-when">결제 위젯 호출 (props: { plan, amount })</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">💰</div>
+      <div>
+        <div class="evt-name">payment_succeeded</div>
+        <div class="evt-when">토스 webhook 성공 시 (props: { amount, plan })</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">📨</div>
+      <div>
+        <div class="evt-name">newsletter_sent</div>
+        <div class="evt-when">서버에서 이메일 발송 직후</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">📩</div>
+      <div>
+        <div class="evt-name">newsletter_opened</div>
+        <div class="evt-when">이메일 추적 픽셀 로드 (Resend webhook)</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">🔗</div>
+      <div>
+        <div class="evt-name">newsletter_clicked</div>
+        <div class="evt-when">이메일 내 링크 클릭 (UTM)</div>
+      </div>
+    </div>
+    <div class="evt-card">
+      <div class="evt-icon">❌</div>
+      <div>
+        <div class="evt-name">subscription_canceled</div>
+        <div class="evt-when">구독 해지 (props: { reason })</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">📋 명명 규칙</div>
+    <div class="cl-body">
+      <strong>형식:</strong> <code>noun_verb</code> (예: <code>signup_completed</code>, <code>payment_succeeded</code>)<br>
+      <strong>NEVER:</strong> CamelCase, 한국어, 띄어쓰기, 동의어 (signup_done vs signup_completed 혼재 X)<br>
+      <strong>속성(properties)에 변수 데이터:</strong> 이벤트 이름은 적게, properties는 풍부하게
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §2: Funnel 분석 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§2. Funnel — 어디서 떨어지는가</h2>
+  <p class="sec-sub">PostHog의 가장 강력한 기능. 가입→결제 흐름의 병목 시각화</p>
+
+  <div class="funnel-vis">
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:10px;">📊 가입 → 결제 funnel (1주일)</div>
+    <div class="fn-row">
+      <div class="fn-name">page_viewed (랜딩)</div>
+      <div class="fn-bar"><div class="fn-fill" style="width:100%">1,000</div></div>
+      <div class="fn-num">1,000</div>
+    </div>
+    <div class="fn-conv">↓ 25% (보통: 30~40%)</div>
+    <div class="fn-row">
+      <div class="fn-name">signup_started</div>
+      <div class="fn-bar"><div class="fn-fill" style="width:25%">250</div></div>
+      <div class="fn-num">250</div>
+    </div>
+    <div class="fn-conv">↓ 80% (정상)</div>
+    <div class="fn-row">
+      <div class="fn-name">signup_completed</div>
+      <div class="fn-bar"><div class="fn-fill" style="width:20%">200</div></div>
+      <div class="fn-num">200</div>
+    </div>
+    <div class="fn-conv">↓ 30% — ⚠️ 문제!</div>
+    <div class="fn-row">
+      <div class="fn-name">checkout_started</div>
+      <div class="fn-bar"><div class="fn-fill" style="width:6%">60</div></div>
+      <div class="fn-num">60</div>
+    </div>
+    <div class="fn-conv">↓ 50% (정상)</div>
+    <div class="fn-row">
+      <div class="fn-name">payment_succeeded</div>
+      <div class="fn-bar"><div class="fn-fill" style="width:3%">30</div></div>
+      <div class="fn-num">30</div>
+    </div>
+  </div>
+
+  <div class="callout red">
+    <div class="cl-label">🔍 진단 — 가입 → 결제 30%가 병목</div>
+    <div class="cl-body">
+      가입 후 결제까지 70%가 이탈. <strong>가설 3가지:</strong><br>
+      ① 가입 직후 가치 못 느낌 → 첫 메일 즉시 발송 (1통 미리 받기)<br>
+      ② 가격 부담 → 7일 무료 체험 추가<br>
+      ③ 결제 흐름 복잡 → 1-click 결제 위젯<br><br>
+      <em>각 가설을 PostHog Feature Flag로 A/B 테스트 (Stage 9 §2 참조)</em>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §3: 코호트 분석 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§3. Cohort Retention — 매월 신규 사용자, 몇 주 남나</h2>
+  <p class="sec-sub">"가입 이후 시간"으로 유저 묶기 — SaaS의 가장 강력한 분석</p>
+
+  <div class="cohort-table">
+    <table>
+      <thead>
+        <tr>
+          <th>가입 코호트</th>
+          <th>인원</th>
+          <th>Day 0</th>
+          <th>Day 7</th>
+          <th>Day 14</th>
+          <th>Day 30</th>
+          <th>Day 60</th>
+          <th>Day 90</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>2026년 1월</strong></td>
+          <td>50</td>
+          <td class="pct-100">100%</td>
+          <td class="pct-70">72%</td>
+          <td class="pct-70">68%</td>
+          <td class="pct-50">55%</td>
+          <td class="pct-50">50%</td>
+          <td class="pct-30">42%</td>
+        </tr>
+        <tr>
+          <td><strong>2026년 2월</strong></td>
+          <td>80</td>
+          <td class="pct-100">100%</td>
+          <td class="pct-90">85%</td>
+          <td class="pct-90">82%</td>
+          <td class="pct-70">75%</td>
+          <td class="pct-50">60%</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>2026년 3월</strong></td>
+          <td>120</td>
+          <td class="pct-100">100%</td>
+          <td class="pct-90">88%</td>
+          <td class="pct-70">75%</td>
+          <td class="pct-50">58%</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>2026년 4월</strong></td>
+          <td>200</td>
+          <td class="pct-100">100%</td>
+          <td class="pct-90">92%</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout green">
+    <div class="cl-label">📈 읽는 법 — 코호트가 점점 좋아지는가?</div>
+    <div class="cl-body">
+      <strong>Day 7 진화:</strong> 1월 72% → 2월 85% → 3월 88% → 4월 92% (✅ 좋아짐)<br>
+      <strong>Day 30 진화:</strong> 1월 55% → 2월 75% → 3월 58% (⚠️ 3월 떨어짐)<br><br>
+      <em>3월 코호트의 Day 30 떨어진 이유 분석</em> = 다음 액션. 신규 채널·콘텐츠·UX 변화 검토.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §4: 리텐션 곡선 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§4. 리텐션 곡선 — 평탄해지는 지점이 PMF 신호</h2>
+
+  <p class="body">PMF 검증의 가장 강력한 시각화. <em>Day 30 이후 곡선이 평평해지면 PMF 도달 신호</em> — 그 사용자들은 진짜 가치를 받는 것.</p>
+
+  <div class="callout purple">
+    <div class="cl-label">📊 PMF 곡선의 3가지 패턴</div>
+    <div class="cl-body">
+      <strong>① Smile (평탄):</strong> 100% → 30%로 떨어진 뒤 그대로 유지. <span style="color:var(--green)">★ PMF 달성</span><br>
+      <strong>② Decline (계속 하락):</strong> 100% → 30% → 10% → 0%. <span style="color:var(--red)">PMF X</span><br>
+      <strong>③ Frown (낙폭 큼):</strong> 100% → 80% → 50% → 5%. <span style="color:var(--yellow)">중간</span><br><br>
+      <em>1번 (Smile)이 나오면 광고·확장 시작. 2·3번이면 가격·페르소나·콘텐츠 재검토.</em>
+    </div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">🎯 SaaS 평균 Day 30 리텐션</div>
+    <div class="cl-body">
+      <strong>일반 SaaS:</strong> 30~40%<br>
+      <strong>좋은 SaaS:</strong> 50~60%<br>
+      <strong>최고 SaaS:</strong> 70%+<br>
+      <strong>뉴스레터 특수:</strong> 60~80% (구독 모델 + 매일 발송)<br><br>
+      목표: 6개월 안에 Day 30 ≥ 60% 달성.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §5: SQL 기초 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§5. SQL — 1인 SaaS에 필요한 만큼만</h2>
+  <p class="sec-sub">PostHog 대시보드로 80%, 직접 SQL은 20%. 그 20%를 위한 최소 SQL</p>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">자주 쓰는 SQL 5선 (Supabase)</span>
+      <span class="codebox-tag">PostgreSQL</span>
+    </div>
+    <div class="codebox-body"><span class="cmt">-- 1. 오늘 가입한 신규 구독자 수</span>
+<span class="kw">SELECT COUNT</span>(*) <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> created_at >= <span class="kw">CURRENT_DATE</span>;
+
+<span class="cmt">-- 2. 활성 유료 구독자 (NSM)</span>
+<span class="kw">SELECT COUNT</span>(*) <span class="kw">FROM</span> subscriptions
+<span class="kw">WHERE</span> status = <span class="str">'active'</span>;
+
+<span class="cmt">-- 3. 어제 발송 성공률</span>
+<span class="kw">SELECT</span>
+  <span class="kw">COUNT</span>(*) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> status = <span class="str">'sent'</span>)::<span class="kw">float</span>
+  / <span class="kw">COUNT</span>(*) * <span class="num">100</span> <span class="kw">AS</span> success_rate
+<span class="kw">FROM</span> send_logs
+<span class="kw">WHERE</span> sent_at >= <span class="kw">CURRENT_DATE</span> - <span class="kw">INTERVAL</span> <span class="str">'1 day'</span>;
+
+<span class="cmt">-- 4. 주제별 활성 구독자 (개인화 분석)</span>
+<span class="kw">SELECT</span> <span class="kw">unnest</span>(topics) <span class="kw">AS</span> topic, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> subscribers
+<span class="kw">FROM</span> subscriptions
+<span class="kw">WHERE</span> status = <span class="str">'active'</span>
+<span class="kw">GROUP BY</span> topic
+<span class="kw">ORDER BY</span> subscribers <span class="kw">DESC</span>;
+
+<span class="cmt">-- 5. 주간 신규 가입 추세 (Excel 차트용)</span>
+<span class="kw">SELECT</span>
+  <span class="kw">DATE_TRUNC</span>(<span class="str">'week'</span>, created_at) <span class="kw">AS</span> week,
+  <span class="kw">COUNT</span>(*) <span class="kw">AS</span> new_users
+<span class="kw">FROM</span> users
+<span class="kw">WHERE</span> created_at >= <span class="kw">NOW</span>() - <span class="kw">INTERVAL</span> <span class="str">'12 weeks'</span>
+<span class="kw">GROUP BY</span> week
+<span class="kw">ORDER BY</span> week;</div>
+  </div>
+
+  <div class="callout blue">
+    <div class="cl-label">💡 SQL 학습 — Claude에게 시키기</div>
+    <div class="cl-body">
+      "지난 주 가입자 중 첫 메일 안 연 사람 명단 SQL 짜줘" → Claude가 즉시 작성. <strong>SQL을 직접 외울 필요 없음.</strong> 대신 결과 해석은 본인이.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §6: AARRR 깊이 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§6. AARRR 5단계 깊이</h2>
+  <p class="sec-sub">Stage 9에서 본 AARRR을 측정 가능한 지표로</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>단계</th><th>핵심 지표</th><th>업계 평균</th><th>내 목표</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Acquisition (획득)</strong></td>
+          <td>주간 신규 방문자 / CAC</td>
+          <td>CAC 0~30,000원</td>
+          <td>오가닉 위주 = CAC ~5,000원</td>
+        </tr>
+        <tr>
+          <td><strong>Activation (활성화)</strong></td>
+          <td>방문 → 가입 전환율 / 첫 메일 오픈율</td>
+          <td>방문→가입 5~15%</td>
+          <td>10%+ / 첫 메일 오픈 70%+</td>
+        </tr>
+        <tr>
+          <td><strong>Retention (유지)</strong></td>
+          <td>Day 30 리텐션 / 월 이탈률</td>
+          <td>Day 30 30~50%</td>
+          <td>60%+ (뉴스레터 특수)</td>
+        </tr>
+        <tr>
+          <td><strong>Referral (추천)</strong></td>
+          <td>NPS / 추천 코드 사용률</td>
+          <td>K-factor 0.1~0.3</td>
+          <td>K-factor 0.5+ (1인당 0.5명 추천)</td>
+        </tr>
+        <tr>
+          <td><strong>Revenue (수익)</strong></td>
+          <td>MRR / ARPU / LTV</td>
+          <td>LTV/CAC 3:1</td>
+          <td>5:1 (오가닉 강함)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">💎 LTV 계산법</div>
+    <div class="cl-body">
+      <strong>LTV = ARPU ÷ 월 이탈률</strong><br>
+      예: ARPU 9,900원, 월 이탈률 5% → LTV = 9,900 ÷ 0.05 = <strong>198,000원</strong><br>
+      CAC가 30,000원 미만이면 매우 좋은 사업 (LTV/CAC ≥ 6).
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §7: 자동 리포트 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§7. 매주 자동 리포트 — n8n + Claude (Stage 7 확장)</h2>
+
+  <div class="codebox">
+    <div class="codebox-head">
+      <span class="codebox-name">n8n 워크플로우 — 주간 데이터 분석 → 텔레그램</span>
+      <span class="codebox-tag">매주 월요일 09:00</span>
+    </div>
+    <div class="codebox-body"><span class="cmt"># 1. Cron 트리거 (월요일 09:00 KST)</span>
+
+<span class="cmt"># 2. PostHog API 호출 — 지난 주 통계 5개</span>
+   ▸ Funnel 가입→결제 전환율
+   ▸ Day 30 리텐션 (지난 주 가입 코호트)
+   ▸ 평균 ARPU
+   ▸ 발송 오픈율
+   ▸ 신규 구독자 수
+
+<span class="cmt"># 3. Supabase SQL 실행 — 매출·이탈</span>
+   ▸ 주간 매출 (payment_succeeded SUM)
+   ▸ 주간 이탈자 수 (subscription_canceled)
+
+<span class="cmt"># 4. Claude로 분석 (system: "주간 SaaS 데이터 분석가. 한국어로.")</span>
+   Input: 위 7개 지표
+   Output: 3문단 분석
+     - 잘 된 것 1가지
+     - 우려 되는 것 1가지
+     - 다음 주 액션 1가지
+
+<span class="cmt"># 5. 텔레그램으로 본인에게 발송</span>
+   📊 [VIBE MASTER 주간 리포트]
+   📈 NSM: 142 (+15 vs 지난 주)
+   💰 MRR: 1,406,800원 (+148,500)
+   📩 발송 오픈율: 68% (-2%p)
+   ⚠️ 우려: 오픈율 하락. 콘텐츠 점검 필요
+   🎯 다음 주 액션: 제목 A/B 테스트 시작</div>
+  </div>
+
+  <div class="callout green">
+    <div class="cl-label">⚡ 효과 — 30분 일이 자동 0분</div>
+    <div class="cl-body">
+      매주 월요일 본인이 직접 PostHog 보고 Excel 정리하던 30분 → 텔레그램 자동 알림 0분. <strong>의사결정 속도 = 데이터 속도.</strong> 일주일 만에 액션 가능.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- §8: 분석 체크리스트 -->
+<section class="section">
+  <h2 class="sec-title"><div class="sec-bar"></div>§8. 데이터 분석 시작 체크리스트</h2>
+
+  <div class="check-list">
+    <div class="check-row"><strong>Event Taxonomy 1장</strong> 작성 → docs/events.md (10개 이벤트 명세)</div>
+    <div class="check-row"><strong>PostHog SDK</strong> 설치 + signup·payment·newsletter 핵심 4개 이벤트 발송 검증</div>
+    <div class="check-row"><strong>핵심 funnel 1개</strong> 만들기: page_viewed → payment_succeeded</div>
+    <div class="check-row"><strong>코호트 retention</strong> 셋업 (월별 가입자 그룹)</div>
+    <div class="check-row"><strong>주간 자동 리포트</strong> n8n 워크플로우 활성화</div>
+    <div class="check-row"><strong>NSM 추적</strong> = 월간 활성 유료 구독자 수 매일 자동 집계</div>
+    <div class="check-row"><strong>Anomaly 알림</strong> — 평소 대비 ±30% 변화 시 텔레그램 자동 알림</div>
+    <div class="check-row"><strong>월 1회 깊은 분석</strong> — 코호트 변화·LTV 추이·CAC 검토</div>
+  </div>
+
+  <div class="callout yellow">
+    <div class="cl-label">🎯 100명 전 vs 후</div>
+    <div class="cl-body">
+      <strong>100명 전:</strong> 데이터 적어 노이즈 많음. 일별 변동에 흔들리지 말 것. 주간만 보기.<br>
+      <strong>100명 후:</strong> 통계적 유의성 시작. 코호트·funnel 분석 의미 있음.<br>
+      <strong>500명 후:</strong> A/B 테스트 의미 있는 결과 가능.
+    </div>
+  </div>
+</section>
+
+<div class="nav-bottom">
+  <a class="btn-nav" href="scaling.html">← 100→1000 스케일링</a>
+  <a class="btn-nav" href="../index.html">커리큘럼 홈 →</a>
+</div>
+
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded',()=>{
+  let progress={};
+  try{progress=JSON.parse(localStorage.getItem('vibe-master-progress'))||{};}catch(e){}
+  const stages=progress.stages||{};
+  document.querySelectorAll('.snav-pill').forEach(pill=>{
+    const m=pill.getAttribute('href')?.match(/stage(\d)/);
+    if(!m)return;
+    if(stages[m[1]]?.completed)pill.classList.add('completed');
+  });
+});
+</script>
+</body>
+</html>
