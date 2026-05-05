@@ -266,6 +266,27 @@ p.body em{color:var(--accent2);font-style:normal;font-weight:600;}
   .rot-stages{grid-template-columns:1fr;}
   .nav-next{flex-direction:column;gap:14px;align-items:stretch;}
 }
+
+/* ── STAGE NAV ── */
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}
+.snav-pill.s2{--c:#10b981;}
+.snav-pill.s3{--c:#8b5cf6;}
+.snav-pill.s4{--c:#ec4899;}
+.snav-pill.s5{--c:#f97316;}
+.snav-pill.s6{--c:#14b8a6;}
+.snav-pill.s7{--c:#f59e0b;}
+.snav-pill.s8{--c:#06b6d4;}
+.snav-pill.s9{--c:#d4a017;}
+.snav-pill.active{background:var(--c);color:#fff;border-color:var(--c);}
+.snav-pill.s9.active{color:#000;}
+.toc{top:105px !important;height:calc(100vh - 105px) !important;}
+.section,.chap-head,.part-head{scroll-margin-top:120px !important;}
+@media(max-width:768px){.stage-nav{justify-content:flex-start;padding:9px 16px;}}
 </style>
 </head>
 <body>
@@ -287,6 +308,20 @@ p.body em{color:var(--accent2);font-style:normal;font-weight:600;}
     </div>
   </div>
 </div>
+
+<!-- STAGE NAV -->
+<nav class="stage-nav">
+  <a href="index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="stage1.html" class="snav-pill s1">1</a>
+  <a href="stage2.html" class="snav-pill s2">2</a>
+  <a href="stage3.html" class="snav-pill s3 active">3</a>
+  <a href="stage4.html" class="snav-pill s4">4</a>
+  <a href="stage5.html" class="snav-pill s5">5</a>
+  <a href="stage6.html" class="snav-pill s6">6</a>
+  <a href="stage7.html" class="snav-pill s7">7</a>
+  <a href="stage8.html" class="snav-pill s8">8</a>
+  <a href="stage9.html" class="snav-pill s9">9</a>
+</nav>
 
 <!-- LAYOUT -->
 <div class="layout">
