@@ -42,6 +42,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 .stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
 .snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+
+.snav-search{color:var(--muted2);font-size:13px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-search:hover{color:var(--accent2)!important;background:var(--s2);border-color:var(--accent);}
 .snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
 .snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
 .snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
@@ -175,6 +178,7 @@ tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family
 
 <nav class="stage-nav">
   <a href="../index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="../search.html" class="snav-search" title="통합 검색">🔍</a>
   <a href="../stage1.html" class="snav-pill s1">1</a>
   <a href="../stage2.html" class="snav-pill s2">2</a>
   <a href="../stage3.html" class="snav-pill s3">3</a>

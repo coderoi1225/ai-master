@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIBE MASTER — 사이트 검색</title>
+<meta name="description" content="9 Stage + 8 부록 + 트러블슈팅 50선 통합 검색. 키워드·기술명·증상으로.">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#0e1219;--s2:#141922;--s3:#1a2130;
+  --border:#1f2a3d;--border2:#2a3a55;
+  --accent:#3b82f6;--accent2:#60a5fa;
+  --blue:#3b82f6;--blue2:#60a5fa;
+  --green:#10b981;--yellow:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--orange:#f97316;--teal:#14b8a6;--pink:#ec4899;
+  --cyan:#06b6d4;--gold:#d4a017;--gold2:#eab308;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-weight:900;font-size:17px;letter-spacing:-1px;display:flex;align-items:center;gap:10px;}
+.logo-vm{color:var(--text);}
+.logo-dot{background:linear-gradient(135deg,var(--blue),var(--purple),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.search-badge{background:rgba(59,130,246,.12);color:var(--accent2);border:1px solid rgba(59,130,246,.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;letter-spacing:.5px;}
+.search-badge::before{content:'🔍 ';}
+.back-link{font-size:12px;color:var(--muted2);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--text);}
+
+/* ── STAGE NAV ── */
+.stage-nav{background:rgba(14,18,25,.85);border-bottom:1px solid var(--border);padding:9px 28px;display:flex;gap:6px;align-items:center;justify-content:center;position:sticky;top:58px;z-index:99;backdrop-filter:blur(10px);overflow-x:auto;}
+.snav-home{color:var(--muted2);font-size:14px;text-decoration:none;padding:5px 10px;border-radius:7px;border:1px solid var(--border);transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:28px;flex-shrink:0;}
+.snav-home:hover{color:var(--text);background:var(--s2);border-color:var(--border2);}
+.snav-pill{min-width:32px;height:28px;padding:0 11px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;transition:all .18s;letter-spacing:.5px;flex-shrink:0;position:relative;}
+.snav-pill:hover{color:var(--text);border-color:var(--border2);transform:translateY(-1px);}
+.snav-pill.s1{--c:#3b82f6;}.snav-pill.s2{--c:#10b981;}.snav-pill.s3{--c:#8b5cf6;}.snav-pill.s4{--c:#ec4899;}.snav-pill.s5{--c:#f97316;}.snav-pill.s6{--c:#14b8a6;}.snav-pill.s7{--c:#f59e0b;}.snav-pill.s8{--c:#06b6d4;}.snav-pill.s9{--c:#d4a017;}
+.snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
+
+/* ── CONTAINER ── */
+.container{max-width:880px;margin:0 auto;padding:50px 28px 100px;}
+
+/* ── HERO ── */
+.hero{margin-bottom:30px;text-align:center;}
+.hero-eyebrow{font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1.15;margin-bottom:12px;}
+.hero h1 span{color:var(--accent2);}
+.hero-lead{font-size:13px;color:var(--muted2);line-height:1.85;max-width:560px;margin:0 auto;}
+
+/* ── SHORTCUT ── */
+.shortcuts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:24px 0 30px;}
+.short-chip{background:var(--s2);border:1px solid var(--border);color:var(--muted2);font-size:11.5px;padding:6px 12px;border-radius:99px;cursor:pointer;transition:all .15s;font-family:'Noto Sans KR',sans-serif;}
+.short-chip:hover{color:var(--text);border-color:var(--accent);}
+
+/* ── PAGEFIND UI 커스터마이징 ── */
+.pagefind-ui{
+  --pagefind-ui-primary: var(--accent);
+  --pagefind-ui-text: var(--text);
+  --pagefind-ui-background: var(--s1);
+  --pagefind-ui-border: var(--border);
+  --pagefind-ui-tag: var(--s3);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 11px;
+  --pagefind-ui-image-border-radius: 8px;
+  --pagefind-ui-image-box-ratio: 3 / 2;
+  --pagefind-ui-font: 'Noto Sans KR', sans-serif;
+}
+.pagefind-ui__search-input{
+  background:var(--s2)!important;
+  color:var(--text)!important;
+  border:1px solid var(--border2)!important;
+  font-size:15px!important;
+  padding:14px 18px!important;
+}
+.pagefind-ui__search-input:focus{
+  border-color:var(--accent)!important;
+  outline:none!important;
+}
+.pagefind-ui__search-clear{color:var(--muted2)!important;}
+.pagefind-ui__result{
+  background:var(--s2)!important;
+  border:1px solid var(--border)!important;
+  border-radius:11px!important;
+  padding:16px 18px!important;
+  margin-bottom:10px!important;
+  transition:border-color .15s;
+}
+.pagefind-ui__result:hover{border-color:var(--border2)!important;}
+.pagefind-ui__result-title{
+  color:var(--text)!important;
+  font-weight:800!important;
+  font-size:15px!important;
+}
+.pagefind-ui__result-link{
+  color:var(--accent2)!important;
+  text-decoration:none!important;
+}
+.pagefind-ui__result-link:hover{color:var(--accent)!important;}
+.pagefind-ui__result-excerpt{
+  color:var(--muted2)!important;
+  font-size:12.5px!important;
+  line-height:1.75!important;
+}
+.pagefind-ui__result-excerpt mark{
+  background:rgba(59,130,246,.25)!important;
+  color:var(--text)!important;
+  padding:1px 3px;
+  border-radius:3px;
+}
+.pagefind-ui__result-tags{margin-top:8px!important;}
+.pagefind-ui__result-tag{
+  background:var(--s3)!important;
+  color:var(--muted2)!important;
+  font-size:10px!important;
+  padding:3px 8px!important;
+  border-radius:99px!important;
+}
+.pagefind-ui__message{color:var(--muted2)!important;font-size:13px!important;}
+.pagefind-ui__filter-name{color:var(--text)!important;font-weight:700!important;}
+.pagefind-ui__filter-value{color:var(--muted2)!important;}
+
+/* ── TIPS ── */
+.tips{background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin-top:30px;}
+.tips-title{font-size:11px;font-weight:700;color:var(--gold2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.tips-list{font-size:12px;color:var(--muted2);line-height:1.95;}
+.tips-list code{font-family:'JetBrains Mono',monospace;background:var(--s1);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--orange);}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+@media(max-width:768px){
+  .container{padding:30px 16px 80px;}
+  .hero h1{font-size:26px;}
+  .stage-nav{justify-content:flex-start;padding:9px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <span class="logo-vm">VIBE<span class="logo-dot">.</span>MASTER</span>
+    <span class="search-badge">통합 검색</span>
+  </div>
+  <a class="back-link" href="index.html">← 커리큘럼 홈</a>
+</div>
+
+<!-- STAGE NAV -->
+<nav class="stage-nav">
+  <a href="index.html" class="snav-home" title="VIBE MASTER 홈">⌂</a>
+  <a href="stage1.html" class="snav-pill s1">1</a>
+  <a href="stage2.html" class="snav-pill s2">2</a>
+  <a href="stage3.html" class="snav-pill s3">3</a>
+  <a href="stage4.html" class="snav-pill s4">4</a>
+  <a href="stage5.html" class="snav-pill s5">5</a>
+  <a href="stage6.html" class="snav-pill s6">6</a>
+  <a href="stage7.html" class="snav-pill s7">7</a>
+  <a href="stage8.html" class="snav-pill s8">8</a>
+  <a href="stage9.html" class="snav-pill s9">9</a>
+</nav>
+
+<!-- CONTAINER -->
+<div class="container">
+
+<section class="hero">
+  <div class="hero-eyebrow">★ 통합 검색 · 22 페이지</div>
+  <h1>9 Stage + 부록 + 트러블슈팅<br><span>한 번에 검색</span></h1>
+  <p class="hero-lead">키워드·기술명·증상·도구명 등 무엇이든. 결과는 페이지 단위로 매칭된 부분만 미리보기.</p>
+</section>
+
+<!-- 빠른 검색 키워드 -->
+<div class="shortcuts">
+  <button class="short-chip" onclick="search('Claude Code')">Claude Code</button>
+  <button class="short-chip" onclick="search('Supabase')">Supabase</button>
+  <button class="short-chip" onclick="search('카카오')">카카오</button>
+  <button class="short-chip" onclick="search('토스')">토스</button>
+  <button class="short-chip" onclick="search('n8n')">n8n</button>
+  <button class="short-chip" onclick="search('webhook')">webhook</button>
+  <button class="short-chip" onclick="search('RLS')">RLS</button>
+  <button class="short-chip" onclick="search('환불')">환불</button>
+  <button class="short-chip" onclick="search('사업자')">사업자</button>
+  <button class="short-chip" onclick="search('가격')">가격</button>
+</div>
+
+<!-- 검색 컴포넌트 마운트 지점 -->
+<div id="search"></div>
+
+<!-- 검색 안내 -->
+<div class="tips">
+  <div class="tips-title">💡 검색 팁</div>
+  <div class="tips-list">
+    • <code>"정확한 구문"</code> 따옴표로 정확한 일치<br>
+    • <code>+필수</code> 단어 앞에 + 붙이면 반드시 포함<br>
+    • <code>-제외</code> 단어 앞에 - 붙이면 제외<br>
+    • 한국어·영어 혼합 OK (예: <code>RLS 정책</code>)
+  </div>
+</div>
+
+</div>
+
+<script src="/pagefind/pagefind-ui.js"></script>
+<script>
+let pagefindUI;
+
+window.addEventListener('DOMContentLoaded', () => {
+  pagefindUI = new PagefindUI({
+    element: "#search",
+    showImages: false,
+    showSubResults: true,
+    resetStyles: false,
+    autofocus: true,
+    translations: {
+      placeholder: "검색어 입력 (예: 카카오, RLS, webhook, 환불...)",
+      clear_search: "지우기",
+      load_more: "더 보기",
+      search_label: "검색",
+      filters_label: "필터",
+      zero_results: "[SEARCH_TERM]에 대한 결과가 없습니다",
+      many_results: "[COUNT]개 결과 — [SEARCH_TERM]",
+      one_result: "1개 결과 — [SEARCH_TERM]",
+      alt_search: "[SEARCH_TERM]에 대한 결과가 없습니다. 대신 [DISPLAY_QUERY] 검색 결과:",
+      search_suggestion: "결과 없음. 비슷한 검색어: [DISPLAY_QUERY]",
+      searching: "[SEARCH_TERM] 검색 중..."
+    }
+  });
+
+  // URL ?q= 파라미터 자동 검색
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  if (q) {
+    setTimeout(() => {
+      const input = document.querySelector('.pagefind-ui__search-input');
+      if (input) {
+        input.value = q;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }, 200);
+  }
+});
+
+function search(term) {
+  const input = document.querySelector('.pagefind-ui__search-input');
+  if (input) {
+    input.value = term;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.focus();
+  }
+}
+
+// stage-nav 완료 표시
+window.addEventListener('DOMContentLoaded', () => {
+  let progress = {};
+  try { progress = JSON.parse(localStorage.getItem('vibe-master-progress')) || {}; } catch(e) {}
+  const stages = progress.stages || {};
+  document.querySelectorAll('.snav-pill').forEach(pill => {
+    const m = pill.getAttribute('href')?.match(/stage(\d)/);
+    if (!m) return;
+    if (stages[m[1]]?.completed) pill.classList.add('completed');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": "output",
+  "buildCommand": "npx -y pagefind@latest --site output --output-subdir pagefind",
+  "installCommand": "echo 'no install'",
   "cleanUrls": true,
   "trailingSlash": false
 }
