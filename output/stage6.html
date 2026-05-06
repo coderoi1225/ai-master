@@ -367,6 +367,9 @@ tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family
 
 .snav-pill.completed::after{content:'✓';position:absolute;top:-4px;right:-4px;background:var(--green);color:#fff;font-size:8px;width:12px;height:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;}
 .snav-pill{position:relative;}
+
+.cursor-blink{animation:blink 1s infinite;}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
 </style>
 </head>
 <body data-stage="6">
@@ -1382,6 +1385,8 @@ async function ask(prompt){
   document.querySelectorAll('.atbtn').forEach(b=>b.disabled=true);
   qbtn.disabled=true;
   resp.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  let fullText='';
   try{
     const res=await fetch('/api/chat',{
       method:'POST',
@@ -1389,6 +1394,7 @@ async function ask(prompt){
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:1200,
+        stream:true,
         system:`VIBE MASTER Stage 6 AI 튜터.
 학습자: 비개발자 1인 창업가. AI 오케스트레이션 학습 중.
 예시 프로젝트: AI 뉴스레터 자동화 서비스 (매일 아침 AI가 특정 주제 뉴스 수집·요약 → 구독자에게 카카오/이메일 자동 발송, 월 9,900원 구독 모델).
@@ -1398,14 +1404,96 @@ Stage 6 범위: 백엔드 인프라 완전 이해. 프론트엔드↔API↔백�
         messages:[{role:'user',content:prompt}]
       })
     });
-    const data=await res.json();
-    respb.innerHTML=fmt(data.content?.[0]?.text||'응답 없음');
+    if(!res.ok){
+      let errMsg='요청 실패';
+      try{const err=await res.json();errMsg=err.message||err.error||errMsg;}catch(e){}
+      respb.innerHTML='<span style="color:var(--red)">⚠️ '+errMsg+'</span>';
+      document.querySelectorAll('.atbtn').forEach(b=>b.disabled=false);
+      qbtn.disabled=false;
+      return;
+    }
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder();
+    let buffer='';
+    respb.innerHTML='';
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('
+');
+      buffer=lines.pop()||'';
+      for(const line of lines){
+        if(line.startsWith('data: ')){
+          try{
+            const data=JSON.parse(line.slice(6));
+            if(data.type==='content_block_delta'&&data.delta&&data.delta.text){
+              fullText+=data.delta.text;
+              respb.innerHTML=fmt(fullText)+'<span class="cursor-blink" style="display:inline-block;width:8px;height:14px;background:var(--accent);margin-left:2px;animation:blink 1s infinite;"></span>';
+            }
+          }catch(e){}
+        }
+      }
+    }
+    if(fullText){
+      respb.innerHTML=fmt(fullText)+'<div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);font-size:10.5px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;"><span>💾 자동 저장됨 (이 브라우저에서 다음 방문 시 표시)</span><button onclick="clearHistory()" style="background:none;border:1px solid var(--border);color:var(--muted2);padding:3px 9px;border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit;">대화 삭제</button></div>';
+      saveQA(prompt,fullText);
+    }else{
+      respb.innerHTML='<span style="color:var(--muted)">응답 없음</span>';
+    }
   }catch(e){
-    respb.innerHTML=`<span style="color:var(--red)">⚠️ 오류: ${e.message}</span>`;
+    respb.innerHTML='<span style="color:var(--red)">⚠️ 오류: '+e.message+'</span>';
   }
   document.querySelectorAll('.atbtn').forEach(b=>b.disabled=false);
   qbtn.disabled=false;
 }
+
+// === 대화 저장 (localStorage, stage별 최근 5개) ===
+const HISTORY_KEY='vibe-tutor-'+(document.body.dataset.stage||'0');
+const MAX_HISTORY=5;
+function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY))||[];}catch(e){return[];}}
+function saveQA(q,a){
+  const h=getHistory();
+  h.push({q:q,a:a,t:Date.now()});
+  while(h.length>MAX_HISTORY)h.shift();
+  try{localStorage.setItem(HISTORY_KEY,JSON.stringify(h));}catch(e){}
+}
+function clearHistory(){
+  if(!confirm('이 stage의 저장된 AI 대화 '+getHistory().length+'개를 모두 삭제할까요?'))return;
+  try{localStorage.removeItem(HISTORY_KEY);}catch(e){}
+  const respb=document.getElementById('respb');
+  if(respb)respb.innerHTML='<span style="color:var(--muted)">대화가 삭제됐습니다.</span>';
+}
+function showHistory(){
+  const h=getHistory();
+  const respb=document.getElementById('respb');
+  const resp=document.getElementById('resp');
+  if(!respb||!resp||h.length===0)return;
+  resp.style.display='block';
+  respb.innerHTML=h.slice().reverse().map((e,i)=>{
+    const ago=Math.floor((Date.now()-e.t)/60000);
+    const agoText=ago<1?'방금':ago<60?ago+'분 전':Math.floor(ago/60)+'시간 전';
+    return '<div style="'+(i>0?'border-top:1px solid var(--border);padding-top:14px;margin-top:14px;':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><strong style="color:var(--accent2);font-size:12px;">Q.</strong><span style="font-size:10px;color:var(--muted);">'+agoText+'</span></div><div style="font-size:12.5px;color:var(--text);margin-bottom:8px;line-height:1.6;">'+e.q.replace(/</g,'&lt;').slice(0,200)+(e.q.length>200?'...':'')+'</div><div style="font-size:13px;color:var(--muted2);">'+fmt(e.a)+'</div></div>';
+  }).join('')+'<div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);text-align:center;"><button onclick="clearHistory()" style="background:none;border:1px solid var(--border);color:var(--muted2);padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;">전체 삭제</button></div>';
+  resp.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// 페이지 로드 시 이전 대화 알림
+window.addEventListener('DOMContentLoaded',()=>{
+  const h=getHistory();
+  if(h.length===0)return;
+  const head=document.querySelector('.at-head');
+  if(!head||document.querySelector('.history-btn'))return;
+  const btn=document.createElement('button');
+  btn.className='history-btn';
+  btn.style.cssText='margin-left:auto;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:var(--accent2);font-size:11px;font-weight:600;padding:5px 11px;border-radius:99px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;';
+  btn.innerHTML='💬 이전 대화 '+h.length;
+  btn.onclick=showHistory;
+  // at-badge 앞에 삽입
+  const badge=head.querySelector('.at-badge');
+  if(badge){head.insertBefore(btn,badge);badge.style.marginLeft='8px';}
+  else head.appendChild(btn);
+});
 
 function send(){
   const inp=document.getElementById('qinput');
