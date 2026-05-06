@@ -145,6 +145,27 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   .err-key{padding-top:0;}
   .stage-nav{justify-content:flex-start;padding:9px 16px;}
 }
+
+/* === U5: 모바일 코드 박스 가독성 (768px↓) === */
+@media(max-width:768px){
+  .codebox-body, .term-body, .pb-body, .tmpl-body, .code-snip{
+    font-size:13px !important;
+    line-height:1.9 !important;
+    padding:13px 14px !important;
+    -webkit-overflow-scrolling:touch;
+  }
+  .codebox-body, .pb-body, .tmpl-body{
+    background-image:linear-gradient(to right, transparent calc(100% - 24px), rgba(212,160,23,0.06) 100%);
+    background-attachment:local;
+  }
+  .codebox-head, .pb-header, .tmpl-head{padding:8px 12px;}
+  .codebox-name, .pb-label, .tmpl-name{font-size:10.5px !important;}
+  .codebox-tag{display:none;}
+  pre, code:not(.codebox-body code):not(.pb-body code){
+    word-break:break-all;
+  }
+}
+
 </style>
 </head>
 <body>
