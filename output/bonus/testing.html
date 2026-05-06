@@ -186,6 +186,46 @@ tbody td code{background:var(--s3);padding:1px 5px;border-radius:4px;font-family
 }
 
 </style>
+<!-- Sentry — 에러 모니터링 (U4) -->
+<script src="https://js.sentry-cdn.com/c02850f37c045aae06ad07427b7a535e.min.js" crossorigin="anonymous"></script>
+<script>
+  if (typeof Sentry !== 'undefined' && Sentry.onLoad) {
+    Sentry.onLoad(function() {
+      Sentry.init({
+        tracesSampleRate: 0.1,
+        environment: location.hostname.includes('localhost') ? 'dev' : 'production',
+        release: 'vibe-master@1.0.0',
+        ignoreErrors: [
+          'ResizeObserver loop',
+          'Non-Error promise rejection captured',
+          /^Loading chunk \d+ failed/,
+          /^Failed to fetch dynamically imported module/,
+          'Network request failed',
+          'Load failed'
+        ],
+        denyUrls: [
+          /pagefind/,
+          /fonts\.googleapis/,
+          /chrome-extension/,
+          /moz-extension/
+        ],
+        beforeSend(event) {
+          // 브라우저 익스텐션 발생 에러 무시
+          var frames = event.exception && event.exception.values && event.exception.values[0] && event.exception.values[0].stacktrace && event.exception.values[0].stacktrace.frames;
+          if (frames && frames.some(function(f){ return f.filename && (f.filename.indexOf('extension://') > -1); })) {
+            return null;
+          }
+          return event;
+        }
+      });
+      // 페이지별 태그 자동 설정
+      try {
+        Sentry.setTag('page', location.pathname);
+        Sentry.setTag('stage', (document.body && document.body.dataset && document.body.dataset.stage) || 'misc');
+      } catch(e) {}
+    });
+  }
+</script>
 </head>
 <body>
 
